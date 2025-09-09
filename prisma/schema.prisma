@@ -9,10 +9,16 @@ datasource db {
 
 model User {
   id            String    @id @default(cuid())
+  firstName     String?
+  lastName      String?
   name          String?
   email         String    @unique
+  phone         String?
+  password      String?
   emailVerified DateTime?
   image         String?
+  provider      String?   @default("email")
+  isVerified    Boolean?  @default(false)
   accounts      Account[]
   sessions      Session[]
   bookings      Booking[]

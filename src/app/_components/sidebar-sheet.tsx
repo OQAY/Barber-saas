@@ -7,13 +7,12 @@ import { quickSearchOptions } from "../_constants/search"
 import Link from "next/link"
 import Image from "next/image"
 import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog"
-import { signOut, useSession } from "next-auth/react"
 import { Avatar, AvatarImage } from "./ui/avatar"
-import SignInDialog from "./sign-in-dialog"
+import { useAuth } from "../_lib/auth-provider"
 
 const SidebarSheet = () => {
-  const { data } = useSession()
-  const handleLogoutClick = () => signOut()
+  const { user, isAuthenticated, logout } = useAuth()
+  const handleLogoutClick = () => logout()
 
   return (
     <SheetContent className="overflow-y-auto">
@@ -22,30 +21,27 @@ const SidebarSheet = () => {
       </SheetHeader>
 
       <div className="flex items-center justify-between gap-3 border-b border-solid py-5">
-        {data?.user ? (
+        {isAuthenticated && user ? (
           <div className="flex items-center gap-2">
             <Avatar>
-              <AvatarImage src={data?.user?.image ?? ""} />
+              <AvatarImage src={user?.image ?? ""} />
             </Avatar>
 
             <div>
-              <p className="font-bold">{data.user.name}</p>
-              <p className="text-xs">{data.user.email}</p>
+              <p className="font-bold">{user.name}</p>
+              <p className="text-xs">{user.email}</p>
             </div>
           </div>
         ) : (
           <>
             <h2 className="font-bold">Olá, faça seu login!</h2>
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button size="icon">
+            <SheetClose asChild>
+              <Button size="icon" asChild>
+                <Link href="/login">
                   <LogInIcon />
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-[90%]">
-                <SignInDialog />
-              </DialogContent>
-            </Dialog>
+                </Link>
+              </Button>
+            </SheetClose>
           </>
         )}
       </div>
@@ -85,7 +81,7 @@ const SidebarSheet = () => {
         ))}
       </div>
 
-      {data?.user && (
+      {isAuthenticated && (
         <div className="flex flex-col gap-2 py-5">
           <Button
             variant="ghost"
