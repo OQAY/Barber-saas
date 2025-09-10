@@ -11,6 +11,7 @@ interface User {
   lastName?: string;
   phone?: string;
   provider: string;
+  image?: string;
 }
 
 interface AuthContextType {

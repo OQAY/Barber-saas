@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "./_components/ui/sonner"
-import Footer from "./_components/footer"
+import Footer from "./_components/layout/footer"
 import { AuthProvider } from "./_lib/auth-provider"
 
 // Configuração da fonte Inter do Google Fonts
