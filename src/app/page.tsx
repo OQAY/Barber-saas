@@ -1,9 +1,10 @@
 import Header from "./_components/layout/header"
+import HeroSection from "./_components/layout/hero-section"
+import QuickSearch from "./_components/common/quick-search"
 import { Button } from "./_components/ui/button"
 import Image from "next/image"
 import { db } from "./_lib/prisma"
 import BarberItem from "./_components/staff/barber-item"
-import { quickSearchOptions } from "./_constants/search"
 import BookingItem from "./_components/booking/booking-item"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
@@ -53,6 +54,9 @@ export default async function Home() {
   return (
     <div>
       <Header />
+      
+      {/* Hero Section */}
+      <HeroSection />
 
       {/* Seção de boas-vindas */}
       <div className="px-5 pt-5">
@@ -69,26 +73,7 @@ export default async function Home() {
       </div>
 
       {/* Categorias de serviços */}
-      <div className="mt-6 flex gap-3 overflow-x-scroll px-2 [&::-webkit-scrollbar]:hidden">
-        {quickSearchOptions.map((option) => (
-          <Button
-            className="gap-2"
-            variant="secondary"
-            key={option.title}
-            asChild
-          >
-            <Link href={`/barbers?service=${option.title}`}>
-              <Image
-                src={option.imageUrl}
-                width={16}
-                height={16}
-                alt={option.title}
-              />
-              {option.title}
-            </Link>
-          </Button>
-        ))}
-      </div>
+      <QuickSearch />
 
       {/* Imagem do banner */}
       <div className="relative mt-6 h-[150px] w-full">
@@ -121,7 +106,7 @@ export default async function Home() {
       )}
 
       {/* Nossos Barbeiros */}
-      <div className="mb-[4.5rem] mt-6">
+      <div id="barbers-section" className="mb-[4.5rem] mt-6">
         <h2 className="mb-3 px-5 text-xs font-bold uppercase text-gray-400">
           Nossos Barbeiros
         </h2>
