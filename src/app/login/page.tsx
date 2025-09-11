@@ -8,7 +8,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeOff, LogIn, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/app/_lib/auth-provider";
+import { signIn } from "next-auth/react";
 
 import { Button } from "@/app/_components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/_components/ui/card";
@@ -28,8 +28,7 @@ function LoginContent() {
   const [isSuccess, setIsSuccess] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const returnUrl = searchParams.get('returnUrl');
-  const { login } = useAuth();
+  const returnUrl = searchParams.get('returnUrl') || '/';
 
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -42,26 +41,15 @@ function LoginContent() {
   const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: data.email,
-          password: data.password,
-        }),
+      // Usar NextAuth com provider de credenciais
+      const result = await signIn('credentials', {
+        redirect: false,
+        email: data.email,
+        password: data.password,
       });
 
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Erro no login');
-      }
-
-      // Sucesso - usar contexto personalizado
-      if (result.token) {
-        login(result.token, result.user);
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
       setIsSuccess(true);
@@ -72,7 +60,8 @@ function LoginContent() {
 
       // Redirecionar após 1.5 segundos para página de origem ou home
       setTimeout(() => {
-        router.push(returnUrl || '/');
+        router.push(returnUrl);
+        router.refresh();
       }, 1500);
 
     } catch (error) {
