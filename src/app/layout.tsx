@@ -3,6 +3,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { Toaster } from "./_components/ui/sonner"
 import Footer from "./_components/layout/footer"
+import NextAuthProvider from "./_providers/auth"
 import { AuthProvider } from "./_lib/auth-provider"
 
 // Configuração da fonte Inter do Google Fonts
@@ -24,12 +25,14 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={inter.className}>
         <AuthProvider>
-          <div className="flex h-full flex-col">
-            <div className="flex-1">{children}</div>
-            <div className="my-4">
-              <Footer />
+          <NextAuthProvider>
+            <div className="flex h-full flex-col">
+              <div className="flex-1">{children}</div>
+              <div className="my-4">
+                <Footer />
+              </div>
             </div>
-          </div>
+          </NextAuthProvider>
         </AuthProvider>
         <Toaster />
       </body>

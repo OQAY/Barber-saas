@@ -20,8 +20,6 @@ import { useSession } from "next-auth/react"
 import { toast } from "sonner"
 import { createBooking } from "../../_actions/create-booking"
 import { getBookings } from "../../_actions/get-bookings"
-import { Dialog, DialogContent } from "../ui/dialog"
-import SignInDialog from "../auth/sign-in-dialog"
 import BookingSummary from "../booking/booking-summary"
 import { useRouter } from "next/navigation"
 
@@ -59,7 +57,6 @@ const filterAvailableTimes = (
 const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
   const { data } = useSession()
   const router = useRouter()
-  const [signInDialogIsOpen, setSignInDialogIsOpen] = useState(false)
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(new Date())
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
@@ -91,7 +88,9 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
     if (data?.user) {
       return setBookingSheetIsOpen(true)
     }
-    return setSignInDialogIsOpen(true)
+    // Redireciona para página de login com URL de retorno
+    const currentPath = window.location.pathname
+    router.push(`/login?returnUrl=${encodeURIComponent(currentPath)}`)
   }
 
   const handleBookingSheetOpenChange = () => {
@@ -327,15 +326,6 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
           </div>
         </CardContent>
       </Card>
-
-      <Dialog
-        open={signInDialogIsOpen}
-        onOpenChange={(open) => setSignInDialogIsOpen(open)}
-      >
-        <DialogContent className="w-[90%]">
-          <SignInDialog />
-        </DialogContent>
-      </Dialog>
     </>
   )
 }
