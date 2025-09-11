@@ -4,8 +4,18 @@ const prisma = new PrismaClient()
 
 async function seedDatabase() {
   try {
-    const images = [
-      "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
+    // Create the main barbershop
+    const barbershopData = {
+      name: "Barbearia Premium",
+      email: "contato@barbeariapremiuem.com",
+      address: "Rua dos Barbeiros, 123 - Centro",
+      phones: ["(11) 99999-1234", "(11) 3333-5678"],
+      description: "Bem-vindo à Barbearia Premium, onde tradição e modernidade se encontram para proporcionar a você uma experiência de cuidado pessoal incomparável. Desde 2020, temos nos dedicado a oferecer serviços de barbearia de alta qualidade, com um toque de autenticidade e estilo.",
+      imageUrl: "https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png",
+    }
+
+    // Barber photos and data
+    const barberImages = [
       "https://utfs.io/f/45331760-899c-4b4b-910e-e00babb6ed81-16q.png",
       "https://utfs.io/f/5832df58-cfd7-4b3f-b102-42b7e150ced2-16r.png",
       "https://utfs.io/f/7e309eaa-d722-465b-b8b6-76217404a3d3-16s.png",
@@ -13,34 +23,121 @@ async function seedDatabase() {
       "https://utfs.io/f/2f9278ba-3975-4026-af46-64af78864494-16u.png",
       "https://utfs.io/f/988646ea-dcb6-4f47-8a03-8d4586b7bc21-16v.png",
       "https://utfs.io/f/60f24f5c-9ed3-40ba-8c92-0cd1dcd043f9-16w.png",
-      "https://utfs.io/f/f64f1bd4-59ce-4ee3-972d-2399937eeafc-16x.png",
-      "https://utfs.io/f/e995db6d-df96-4658-99f5-11132fd931e1-17j.png",
     ]
 
-    const creativeNames = [
-      "Barbearia Vintage",
-      "Corte & Estilo",
-      "Barba & Navalha",
-      "The Dapper Den",
-      "Cabelo & Cia.",
-      "Machado & Tesoura",
-      "Barbearia Elegance",
-      "Aparência Impecável",
-      "Estilo Urbano",
-      "Estilo Clássico",
-    ]
-
-    const addresses = [
-      "Rua da Barbearia, 123",
-      "Avenida dos Cortes, 456",
-      "Praça da Barba, 789",
-      "Travessa da Navalha, 101",
-      "Alameda dos Estilos, 202",
-      "Estrada do Machado, 303",
-      "Avenida Elegante, 404",
-      "Praça da Aparência, 505",
-      "Rua Urbana, 606",
-      "Avenida Clássica, 707",
+    const barberData = [
+      {
+        name: "Lucas Silva",
+        email: "lucas@barbeariapremiuem.com",
+        phone: "(11) 99999-1111",
+        bio: "Especialista em cortes modernos e clássicos. 8 anos de experiência no ramo.",
+        specialties: ["Cabelo", "Barba", "Acabamento"],
+        workingHours: {
+          monday: { start: "09:00", end: "18:00" },
+          tuesday: { start: "09:00", end: "18:00" },
+          wednesday: { start: "09:00", end: "18:00" },
+          thursday: { start: "09:00", end: "18:00" },
+          friday: { start: "09:00", end: "18:00" },
+          saturday: { start: "08:00", end: "17:00" },
+          sunday: null
+        }
+      },
+      {
+        name: "Pedro Santos",
+        email: "pedro@barbeariapremiuem.com",
+        phone: "(11) 99999-2222",
+        bio: "Expert em barba e bigode. Técnicas tradicionais com navalha.",
+        specialties: ["Barba", "Sobrancelha", "Massagem"],
+        workingHours: {
+          monday: { start: "10:00", end: "19:00" },
+          tuesday: { start: "10:00", end: "19:00" },
+          wednesday: { start: "10:00", end: "19:00" },
+          thursday: { start: "10:00", end: "19:00" },
+          friday: { start: "10:00", end: "19:00" },
+          saturday: { start: "09:00", end: "18:00" },
+          sunday: null
+        }
+      },
+      {
+        name: "Maria Oliveira",
+        email: "maria@barbeariapremiuem.com",
+        phone: "(11) 99999-3333",
+        bio: "Especialista em cortes femininos e design de sobrancelhas.",
+        specialties: ["Cabelo", "Sobrancelha", "Hidratação"],
+        workingHours: {
+          monday: { start: "09:00", end: "17:00" },
+          tuesday: { start: "09:00", end: "17:00" },
+          wednesday: { start: "09:00", end: "17:00" },
+          thursday: { start: "09:00", end: "17:00" },
+          friday: { start: "09:00", end: "17:00" },
+          saturday: { start: "08:00", end: "16:00" },
+          sunday: null
+        }
+      },
+      {
+        name: "Carlos Mendes",
+        email: "carlos@barbeariapremiuem.com",
+        phone: "(11) 99999-4444",
+        bio: "Especialista em cortes infantis e barbas estilizadas.",
+        specialties: ["Cabelo", "Barba", "Massagem"],
+        workingHours: {
+          monday: { start: "08:00", end: "17:00" },
+          tuesday: { start: "08:00", end: "17:00" },
+          wednesday: { start: "08:00", end: "17:00" },
+          thursday: { start: "08:00", end: "17:00" },
+          friday: { start: "08:00", end: "17:00" },
+          saturday: { start: "07:00", end: "15:00" },
+          sunday: null
+        }
+      },
+      {
+        name: "Ana Costa",
+        email: "ana@barbeariapremiuem.com",
+        phone: "(11) 99999-5555",
+        bio: "Master em coloração e tratamentos capilares avançados.",
+        specialties: ["Corte de Cabelo", "Hidratação", "Sobrancelha"],
+        workingHours: {
+          monday: { start: "12:00", end: "20:00" },
+          tuesday: { start: "12:00", end: "20:00" },
+          wednesday: { start: "12:00", end: "20:00" },
+          thursday: { start: "12:00", end: "20:00" },
+          friday: { start: "12:00", end: "20:00" },
+          saturday: { start: "10:00", end: "18:00" },
+          sunday: null
+        }
+      },
+      {
+        name: "Roberto Lima",
+        email: "roberto@barbeariapremiuem.com",
+        phone: "(11) 99999-6666",
+        bio: "Barbeiro tradicional com 15 anos de experiência.",
+        specialties: ["Cabelo", "Barba", "Acabamento"],
+        workingHours: {
+          monday: { start: "07:00", end: "16:00" },
+          tuesday: { start: "07:00", end: "16:00" },
+          wednesday: { start: "07:00", end: "16:00" },
+          thursday: { start: "07:00", end: "16:00" },
+          friday: { start: "07:00", end: "16:00" },
+          saturday: { start: "06:00", end: "14:00" },
+          sunday: null
+        }
+      },
+      {
+        name: "Fernanda Alves",
+        email: "fernanda@barbeariapremiuem.com",
+        phone: "(11) 99999-7777",
+        bio: "Especialista em design de sobrancelhas e estética facial.",
+        specialties: ["Sobrancelha", "Hidratação", "Massagem"],
+        workingHours: {
+          monday: { start: "13:00", end: "21:00" },
+          tuesday: { start: "13:00", end: "21:00" },
+          wednesday: { start: "13:00", end: "21:00" },
+          thursday: { start: "13:00", end: "21:00" },
+          friday: { start: "13:00", end: "21:00" },
+          saturday: { start: "11:00", end: "19:00" },
+          sunday: null
+        }
+      }
     ]
 
     const services = [
@@ -88,62 +185,75 @@ async function seedDatabase() {
       },
     ]
 
-    for (let i = 0; i < 10; i++) {
-      const name = creativeNames[i]
-      const address = addresses[i]
-      const imageUrl = images[i]
-      const email = `contacto@${name.replace(/\s+/g, "").toLowerCase()}.com`
+    // Check if the barbershop already exists
+    const existingBarbershop = await prisma.barbershop.findUnique({
+      where: { email: barbershopData.email },
+    })
 
-      // Verifica se a barbearia já existe
-      const existingBarbershop = await prisma.barbershop.findUnique({
-        where: { email },
+    let barbershop
+    if (existingBarbershop) {
+      // Update existing barbershop
+      barbershop = await prisma.barbershop.update({
+        where: { email: barbershopData.email },
+        data: barbershopData,
+      })
+      console.log(`Barbershop ${barbershopData.name} updated.`)
+    } else {
+      // Create new barbershop
+      barbershop = await prisma.barbershop.create({
+        data: barbershopData,
+      })
+      console.log(`Barbershop ${barbershopData.name} created.`)
+    }
+
+    // Create services for the barbershop
+    for (const service of services) {
+      const existingService = await prisma.barbershopService.findFirst({
+        where: {
+          name: service.name,
+          barbershopId: barbershop.id,
+        },
       })
 
-      if (existingBarbershop) {
-        // Atualiza a barbearia existente
-        await prisma.barbershop.update({
-          where: { email },
+      if (!existingService) {
+        await prisma.barbershopService.create({
           data: {
-            name,
-            address,
-            imageUrl,
-            phones: ["(11) 99999-9999", "(11) 99999-9999"],
-            description:
-              "Bem-vindo à [Nome da Barbearia], onde tradição e modernidade se encontram para proporcionar a você uma experiência de cuidado pessoal incomparável. Desde [ano de fundação], temos nos dedicado a oferecer serviços de barbearia de alta qualidade, com um toque de autenticidade e estilo.",
+            name: service.name,
+            description: service.description,
+            price: service.price,
+            imageUrl: service.imageUrl,
+            barbershopId: barbershop.id,
           },
         })
-        console.log(`Barbershop with email ${email} updated.`)
+        console.log(`Service ${service.name} created.`)
+      }
+    }
+
+    // Create barbers for the barbershop
+    for (let i = 0; i < barberData.length; i++) {
+      const barber = barberData[i]
+      const photo = barberImages[i]
+      
+      const existingBarber = await prisma.barber.findUnique({
+        where: { email: barber.email },
+      })
+
+      if (!existingBarber) {
+        await prisma.barber.create({
+          data: {
+            name: barber.name,
+            email: barber.email,
+            phone: barber.phone,
+            photo: photo,
+            bio: barber.bio,
+            specialties: barber.specialties,
+            workingHours: barber.workingHours,
+            barbershopId: barbershop.id,
+          },
+        })
+        console.log(`Barber ${barber.name} created.`)
       } else {
-        // Cria uma nova barbearia se não existir
-        const barbershop = await prisma.barbershop.create({
-          data: {
-            name,
-            email,
-            address,
-            imageUrl,
-            phones: ["(11) 99999-9999", "(11) 99999-9999"],
-            description:
-              "Bem-vindo à [Nome da Barbearia], onde tradição e modernidade se encontram para proporcionar a você uma experiência de cuidado pessoal incomparável. Desde [ano de fundação], temos nos dedicado a oferecer serviços de barbearia de alta qualidade, com um toque de autenticidade e estilo.",
-          },
-        })
-
-        for (const service of services) {
-          await prisma.barbershopService.create({
-            data: {
-              name: service.name,
-              description: service.description,
-              price: service.price,
-              barbershop: {
-                connect: {
-                  id: barbershop.id,
-                },
-              },
-              imageUrl: service.imageUrl,
-            },
-          })
-        }
-
-        console.log(`Barbershop with email ${email} created.`)
+        console.log(`Barber ${barber.name} already exists.`)
       }
     }
 
