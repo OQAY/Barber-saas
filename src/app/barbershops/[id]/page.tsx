@@ -1,5 +1,5 @@
 import PhoneItem from "@/app/_components/common/phone-item"
-import ServiceItem from "@/app/_components/common/service-items"
+import ServiceItem from "@/app/_components/establishments/service-items"
 import SidebarButton from "@/app/_components/layout/sidebar-sheet"
 import { Button } from "@/app/_components/ui/button"
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet"
