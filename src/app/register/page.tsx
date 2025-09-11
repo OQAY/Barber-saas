@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeOff, UserPlus, CheckCircle, ArrowLeft, ArrowRight, Mail, Phone, Lock, User } from "lucide-react";
+import { Eye, EyeOff, UserPlus, CheckCircle, ArrowLeft, ArrowRight, Mail, Lock, User } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/app/_lib/auth-provider";
 
@@ -63,11 +63,8 @@ const registerSchema = z.object({
 });
 
 type RegisterFormData = z.infer<typeof registerSchema>;
-type Step1Data = z.infer<typeof step1Schema>;
-type Step2Data = z.infer<typeof step2Schema>;
-type Step3Data = z.infer<typeof step3Schema>;
 
-export default function RegisterPage() {
+function RegisterContent() {
   const [currentStep, setCurrentStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -616,5 +613,13 @@ export default function RegisterPage() {
         </Card>
       </div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>}>
+      <RegisterContent />
+    </Suspense>
   );
 }

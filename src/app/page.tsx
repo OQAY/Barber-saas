@@ -2,10 +2,9 @@ import Header from "./_components/layout/header"
 import { Button } from "./_components/ui/button"
 import Image from "next/image"
 import { db } from "./_lib/prisma"
-import BarbershopItem from "./_components/barbershop/barbershop-item"
+import BarberItem from "./_components/staff/barber-item"
 import { quickSearchOptions } from "./_constants/search"
 import BookingItem from "./_components/booking/booking-item"
-import Search from "./_components/common/search"
 import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../app/_lib/Auth"
@@ -16,12 +15,18 @@ export default async function Home() {
   // Obtem a sessão do usuário
   const session = await getServerSession(authOptions)
 
-  // Busca as barbearias e os agendamentos confirmados do usuário
-  const [barbershops, popularBarbershops, bookings] = await Promise.all([
-    db.barbershop.findMany(),
-    db.barbershop.findMany({
-      orderBy: {
-        id: "asc",
+  // Busca os barbeiros através da barbearia e os agendamentos confirmados do usuário
+  const [barbershopWithBarbers, bookings] = await Promise.all([
+    db.barbershop.findFirst({
+      include: {
+        barbers: {
+          where: {
+            isActive: true,
+          },
+          orderBy: {
+            name: "asc",
+          },
+        },
       },
     }),
     session?.user
@@ -43,6 +48,8 @@ export default async function Home() {
       : Promise.resolve([]),
   ])
 
+  const barbers = barbershopWithBarbers?.barbers || []
+
   return (
     <div>
       <Header />
@@ -61,12 +68,7 @@ export default async function Home() {
         </p>
       </div>
 
-      {/* Seção de busca */}
-      <div className="mt-6 px-5">
-        <Search />
-      </div>
-
-      {/* Opções de busca rápida */}
+      {/* Categorias de serviços */}
       <div className="mt-6 flex gap-3 overflow-x-scroll px-2 [&::-webkit-scrollbar]:hidden">
         {quickSearchOptions.map((option) => (
           <Button
@@ -75,7 +77,7 @@ export default async function Home() {
             key={option.title}
             asChild
           >
-            <Link href={`/barbershops?service=${option.title}`}>
+            <Link href={`/barbers?service=${option.title}`}>
               <Image
                 src={option.imageUrl}
                 width={16}
@@ -118,34 +120,25 @@ export default async function Home() {
         </p>
       )}
 
-      {/* Barbearias recomendadas */}
-      <div className="mt-6">
-        <h2 className="mb-3 px-5 text-xs font-bold uppercase text-gray-400">
-          Recomendados
-        </h2>
-
-        <div className="flex gap-4 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
-          {barbershops.map((barbershop) => (
-            <div key={barbershop.id} className="min-w-[167px] max-w-[167px]">
-              <BarbershopItem key={barbershop.id} barbershop={barbershop} />
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Barbearias populares */}
+      {/* Nossos Barbeiros */}
       <div className="mb-[4.5rem] mt-6">
         <h2 className="mb-3 px-5 text-xs font-bold uppercase text-gray-400">
-          Populares
+          Nossos Barbeiros
         </h2>
 
-        <div className="flex gap-4 overflow-x-auto px-5 [&::-webkit-scrollbar]:hidden">
-          {popularBarbershops.map((barbershop) => (
-            <div key={barbershop.id} className="min-w-[167px] max-w-[167px]">
-              <BarbershopItem key={barbershop.id} barbershop={barbershop} />
-            </div>
-          ))}
-        </div>
+        {barbers.length > 0 ? (
+          <div className="grid grid-cols-3 gap-3 px-5">
+            {barbers.map((barber) => (
+              <BarberItem key={barber.id} barber={barber} />
+            ))}
+          </div>
+        ) : (
+          <div className="px-5">
+            <p className="text-gray-500 text-center py-8">
+              Nenhum barbeiro disponível no momento. Total encontrados: {barbers.length}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

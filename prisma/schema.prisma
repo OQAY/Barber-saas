@@ -19,12 +19,20 @@ model User {
   image         String?
   provider      String?   @default("email")
   isVerified    Boolean?  @default(false)
+  role          UserRole? @default(USER)
   accounts      Account[]
   sessions      Session[]
   bookings      Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum UserRole {
+  USER
+  BARBER
+  MANAGER
+  OWNER
 }
 
 model Account {
@@ -77,6 +85,31 @@ model Barbershop {
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
   services    BarbershopService[]
+  barbers     Barber[]
+}
+
+model Barber {
+  id           String     @id @default(uuid())
+  name         String
+  email        String     @unique
+  phone        String?
+  photo        String?
+  bio          String?
+  specialties  String[]
+  workingHours Json?
+  isActive     Boolean    @default(true)
+  role         BarberRole @default(BARBER)
+  barbershopId String
+  barbershop   Barbershop @relation(fields: [barbershopId], references: [id])
+  bookings     Booking[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum BarberRole {
+  BARBER
+  MANAGER
+  OWNER
 }
 
 model BarbershopService {
@@ -96,7 +129,19 @@ model Booking {
   user      User              @relation(fields: [userId], references: [id])
   serviceId String
   service   BarbershopService @relation(fields: [serviceId], references: [id])
+  barberId  String
+  barber    Barber            @relation(fields: [barberId], references: [id])
   date      DateTime
+  status    BookingStatus     @default(SCHEDULED)
+  notes     String?
+  totalPrice Decimal?         @db.Decimal(10, 2)
   createAt  DateTime          @default(now())
   updatedAt DateTime          @updatedAt
+}
+
+enum BookingStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }

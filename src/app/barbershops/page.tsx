@@ -1,4 +1,4 @@
-import BarbershopItem from "../_components/barbershop/barbershop-item"
+import BarbershopItem from "../_components/establishments/barbershop-item"
 import Header from "../_components/layout/header"
 import Search from "../_components/common/search"
 import { db } from "../_lib/prisma"
