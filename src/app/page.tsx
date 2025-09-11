@@ -44,6 +44,7 @@ export default async function Home() {
                 barbershop: true,
               },
             },
+            barber: true,
           },
         })
       : Promise.resolve([]),

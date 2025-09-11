@@ -26,6 +26,7 @@ const BookingsPage = async () => {
             barbershop: true,
           },
         },
+        barber: true,
       },
     }),
     db.booking.findMany({
@@ -41,6 +42,7 @@ const BookingsPage = async () => {
             barbershop: true,
           },
         },
+        barber: true,
       },
     }),
   ])

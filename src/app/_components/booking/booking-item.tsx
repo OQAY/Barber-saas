@@ -41,6 +41,7 @@ interface BookingItemProps {
           barbershop: true
         }
       }
+      barber: true
     }
   }>
 }
@@ -82,11 +83,11 @@ const BookingItem = ({ booking }: BookingItemProps) => {
 
               <div className="flex items-center gap-2">
                 <Avatar className="h-6 w-6">
-                  <AvatarImage src={booking.service.barbershop.imageUrl} />
-                  <AvatarFallback>A</AvatarFallback>
+                  <AvatarImage src={booking.barber.avatarUrl || booking.service.barbershop.imageUrl} />
+                  <AvatarFallback>{booking.barber.name[0]}</AvatarFallback>
                 </Avatar>
 
-                <p className="text-sm">{booking.service.barbershop.name}</p>
+                <p className="text-sm">{booking.barber.name}</p>
               </div>
             </div>
 
@@ -113,22 +114,22 @@ const BookingItem = ({ booking }: BookingItemProps) => {
             <Image
               src={booking.service.imageUrl}
               fill
-              alt={booking.service.barbershop.name}
+              alt={booking.barber.name}
             />
 
             <div className="absolute bottom-4 left-0 w-full px-5">
               <Card>
                 <CardContent className="flex gap-2 p-3">
                   <Avatar>
-                    <AvatarImage src={booking.service.barbershop.imageUrl} />
+                    <AvatarImage src={booking.barber.avatarUrl || booking.service.barbershop.imageUrl} />
                   </Avatar>
 
                   <div>
                     <h2 className="font-bold">
-                      {booking.service.barbershop.name}
+                      {booking.barber.name}
                     </h2>
                     <h3 className="overflow-hidden text-ellipsis text-nowrap text-xs">
-                      {booking.service.barbershop.address}
+                      {booking.barber.specialty}
                     </h3>
                   </div>
                 </CardContent>

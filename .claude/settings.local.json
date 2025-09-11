@@ -1,0 +1,136 @@
+{
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(python:*)",
+      "Bash(dir logs)",
+      "Bash(tail:*)",
+      "Bash(grep:*)",
+      "Bash(findstr:*)",
+      "Bash(type:*)",
+      "Bash(cat:*)",
+      "Bash(pip install:*)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(taskkill:*)",
+      "Bash(powershell:*)",
+      "Bash(start http://localhost:8080/pages/websocket_arbitrage.html)",
+      "Bash(cmd /c start http://localhost:8080/pages/websocket_arbitrage.html)",
+      "Bash(explorer \"http://localhost:8080/pages/websocket_arbitrage.html\")",
+      "Bash(wmic process where:*)",
+      "Bash(git add:*)",
+      "Bash(git commit --no-signoff:*)",
+      "Bash(rg:*)",
+      "Bash(dir)",
+      "Bash(dir:*)",
+      "Bash(find:*)",
+      "Bash(timeout 10 python src/scripts/start_distributed_websocket.py)",
+      "Bash(timeout 10 python:*)",
+      "Bash(mv:*)",
+      "WebFetch(domain:www.gate.io)",
+      "Bash(timeout:*)",
+      "Bash(git reset:*)",
+      "Bash(git branch:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue:*)",
+      "Bash(curl:*)",
+      "Bash(git stash:*)",
+      "Bash(sed:*)",
+      "Bash(mkdir:*)",
+      "Bash(del debug_main.py)",
+      "Bash(rm:*)",
+      "Bash(git log:*)",
+      "Bash(git fetch:*)",
+      "Bash(cp:*)",
+      "Bash(C:UserslucasAppDataLocalProgramsPythonPython313python.exe -m pip install psutil)",
+      "Bash(py exe.py)",
+      "Bash(pkill:*)",
+      "Bash(git merge:*)",
+      "Bash(git rm:*)",
+      "Bash(git clean:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(git rebase:*)",
+      "Bash(git tag:*)",
+      "Bash(start http://localhost:8080/pages/arb.html)",
+      "Bash(start http://localhost:8080/pages/ws-arb.html)",
+      "Bash(start http://localhost:8080/shared/web/pages/arb.html)",
+      "Bash(start http://localhost:8080/shared/web/assets/dados.json)",
+      "Bash(start http://localhost:8080/get_logs.html)",
+      "Bash(start http://localhost:8080/test_websocket.html)",
+      "Bash(node:*)",
+      "Bash(where:*)",
+      "Bash(\"C:\\Users\\lucas\\AppData\\Local\\Microsoft\\WindowsApps\\MediaPlayer.exe\" \"C:\\Users\\lucas\\.claude\\song\\finish.mp3\")",
+      "Bash(call kill.bat)",
+      "Bash(mkdir:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:www.ifood.com.br)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(del \"ENTERPRISE-STATUS.md\")",
+      "Bash(start http://localhost:8080/admin.html)",
+      "Bash(ng serve)",
+      "Bash(ng serve:*)",
+      "Bash(start http://localhost:4202)",
+      "Bash(start http://localhost:4203)",
+      "Bash(docker compose:*)",
+      "Bash(npm run start:dev:*)",
+      "Bash(cmd /c:*)",
+      "Bash(git gc:*)",
+      "Bash(ng version:*)",
+      "Bash(npm run test:*)",
+      "Bash(ng test:*)",
+      "Bash(npm install:*)",
+      "Bash(GIT_SEQUENCE_EDITOR=\"sed -i ''1s/pick/edit/''\" git rebase -i 96f3de6)",
+      "Bash(GIT_SEQUENCE_EDITOR=\"sed -i -e ''1s/pick/edit/'' -e ''2s/pick/edit/'' -e ''3s/pick/edit/''\" git rebase -i 73db3a7)",
+      "Bash(GIT_SEQUENCE_EDITOR=\"sed -i ''/f5945f2/d; /21faabc/d; /96f3de6/d''\" git rebase -i 4db146c)",
+      "Bash(tree:*)",
+      "WebSearch",
+      "Bash(npm run dev:*)",
+      "Bash(start http://localhost:3000)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "context7"
+  ],
+  "disabledMcpjsonServers": [],
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -c \"(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Ring02.wav').PlaySync()\""
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -c \"(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Windows Notify Calendar.wav').PlaySync()\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -c \"(New-Object Media.SoundPlayer 'C:\\Windows\\Media\\Windows Feed Discovered.wav').PlaySync()\""
+          }
+        ]
+      }
+    ]
+  }
+}
