@@ -10,7 +10,21 @@ interface BarberItemProps {
   barber: Barber
 }
 
+// Função para criar slug a partir do nome (temporária até migração)
+function createSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '-')
+    .trim()
+}
+
 const BarberItem = ({ barber }: BarberItemProps) => {
+  // Usa o slug se existir, senão gera um baseado no nome
+  const barberSlug = barber.slug || createSlug(barber.name)
+  
   return (
     <Card className="min-w-[110px] rounded-2xl">
       <CardContent className="p-0 px-1 pt-1">
@@ -40,7 +54,7 @@ const BarberItem = ({ barber }: BarberItemProps) => {
         {/* BOTÃO - 20% */}
         <div className="px-1 pb-2">
           <Button variant="secondary" className="h-8 w-full text-xs" asChild>
-            <Link href={`/barbers/${barber.id}`}>
+            <Link href={`/barbers/${barberSlug}`}>
               Reservar
             </Link>
           </Button>

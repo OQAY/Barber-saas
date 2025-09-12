@@ -10,18 +10,49 @@ import Link from "next/link"
 import { Card, CardContent } from "@/app/_components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/_components/ui/avatar"
 import { Badge } from "@/app/_components/ui/badge"
+import { notFound } from "next/navigation"
+import BarberSpecialties from "@/app/_components/staff/barber-specialties"
 
 interface BarberPageProps {
   params: {
-    id: string
+    slug: string
   }
 }
 
+// Função para criar slug a partir do nome (temporária até migração)
+function createSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s]/g, '')
+    .replace(/\s+/g, '-')
+    .trim()
+}
+
 export async function generateMetadata({ params }: BarberPageProps) {
-  const barber = await db.barber.findUnique({
-    where: { id: params.id },
+  // Primeiro tenta buscar por slug
+  let barber = await db.barber.findUnique({
+    where: { slug: params.slug },
     select: { name: true, photo: true }
   })
+  
+  // Se não encontrar, tenta buscar por ID (compatibilidade temporária)
+  if (!barber && params.slug.includes('-')) {
+    barber = await db.barber.findUnique({
+      where: { id: params.slug },
+      select: { name: true, photo: true }
+    })
+  }
+  
+  // Se ainda não encontrar, tenta buscar pelo nome convertido em slug
+  if (!barber) {
+    const allBarbers = await db.barber.findMany({
+      select: { id: true, name: true, photo: true }
+    })
+    
+    barber = allBarbers.find(b => createSlug(b.name) === params.slug) || null
+  }
   
   return {
     title: barber?.name || 'Barbeiro',
@@ -32,11 +63,9 @@ export async function generateMetadata({ params }: BarberPageProps) {
 }
 
 const BarberPage = async ({ params }: BarberPageProps) => {
-  // Busca o barbeiro e a barbearia relacionada
-  const barber = await db.barber.findUnique({
-    where: {
-      id: params.id,
-    },
+  // Primeiro tenta buscar por slug
+  let barber = await db.barber.findUnique({
+    where: { slug: params.slug },
     include: {
       barbershop: {
         include: {
@@ -45,16 +74,38 @@ const BarberPage = async ({ params }: BarberPageProps) => {
       },
     },
   })
+  
+  // Se não encontrar, tenta buscar por ID (compatibilidade temporária)
+  if (!barber && params.slug.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+    barber = await db.barber.findUnique({
+      where: { id: params.slug },
+      include: {
+        barbershop: {
+          include: {
+            services: true,
+          },
+        },
+      },
+    })
+  }
+  
+  // Se ainda não encontrar, tenta buscar pelo nome convertido em slug
+  if (!barber) {
+    const allBarbers = await db.barber.findMany({
+      include: {
+        barbershop: {
+          include: {
+            services: true,
+          },
+        },
+      },
+    })
+    
+    barber = allBarbers.find(b => createSlug(b.name) === params.slug) || null
+  }
 
   if (!barber) {
-    return (
-      <div className="flex flex-col items-center justify-center p-12">
-        <p className="text-red-500 mb-4">Barbeiro não encontrado</p>
-        <Link href="/">
-          <Button variant="outline">Voltar para Home</Button>
-        </Link>
-      </div>
-    )
+    notFound()
   }
 
   // Converte Decimal para number para evitar erro de serialização
@@ -150,16 +201,10 @@ const BarberPage = async ({ params }: BarberPageProps) => {
               }
             </p>
             
-            {/* Especialidades */}
+            {/* Especialidades com ícones */}
             <div className="mt-4">
-              <p className="text-xs font-semibold mb-2">Especialidades:</p>
-              <div className="flex flex-wrap gap-2">
-                {barber.specialties.map((specialty) => (
-                  <Badge key={specialty} variant="outline">
-                    {specialty}
-                  </Badge>
-                ))}
-              </div>
+              <p className="text-xs font-semibold mb-3">Especialidades:</p>
+              <BarberSpecialties specialties={barber.specialties} variant="button" />
             </div>
           </CardContent>
         </Card>

@@ -1,9 +1,9 @@
-interface QuickSearchOpition {
+interface SpecialtyOption {
   imageUrl: string
   title: string
 }
 
-export const quickSearchOptions: QuickSearchOpition[] = [
+export const specialtyOptions: SpecialtyOption[] = [
   {
     imageUrl: "/cabelo.svg",
     title: "Cabelo",
@@ -40,4 +40,20 @@ export const quickSearchOptions: QuickSearchOpition[] = [
     imageUrl: "/coloracao.svg",
     title: "Coloração",
   },
+  {
+    imageUrl: "/acabamento.svg",
+    title: "Acabamento",
+  },
+  {
+    imageUrl: "/massagem.svg",
+    title: "Massagem",
+  },
 ]
+
+// Função helper para buscar o ícone da especialidade
+export function getSpecialtyIcon(specialty: string): string {
+  const found = specialtyOptions.find(
+    option => option.title.toLowerCase() === specialty.toLowerCase()
+  )
+  return found ? found.imageUrl : "/cabelo.svg" // default icon
+}
