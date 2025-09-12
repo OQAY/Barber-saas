@@ -17,22 +17,15 @@ export const createBooking = async (params: CreateBookingParams) => {
     throw new Error("Usuário não autenticado")
   }
   
-  // Correção temporária: se não tem barberId, pega o primeiro barbeiro disponível
-  let barberId = params.barberId
-  if (!barberId) {
-    const firstBarber = await db.barber.findFirst({
-      where: { isActive: true }
-    })
-    if (!firstBarber) {
-      throw new Error("Nenhum barbeiro disponível")
-    }
-    barberId = firstBarber.id
+  // Valida se o barberId foi fornecido
+  if (!params.barberId) {
+    throw new Error("É necessário selecionar um barbeiro para fazer a reserva")
   }
 
   await db.booking.create({
     data: { 
       serviceId: params.serviceId,
-      barberId: barberId,
+      barberId: params.barberId,
       date: params.date,
       userId: (user.user as any).id,
       status: "SCHEDULED"
