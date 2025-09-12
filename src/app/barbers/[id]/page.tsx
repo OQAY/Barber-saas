@@ -171,7 +171,7 @@ const BarberPage = async ({ params }: BarberPageProps) => {
           Serviços Disponíveis
         </h2>
         <div className="space-y-3">
-          {barbershop.services
+          {barber.barbershop.services
             .filter((service) => {
               // Filtra serviços baseado nas especialidades do barbeiro
               const serviceCategory = service.name.toLowerCase()
@@ -190,7 +190,7 @@ const BarberPage = async ({ params }: BarberPageProps) => {
             ))}
           
           {/* Se não houver filtro específico, mostra todos os serviços */}
-          {barbershop.services.length === 0 && (
+          {barber.barbershop.services.length === 0 && (
             <p className="text-sm text-muted-foreground">
               Nenhum serviço disponível no momento.
             </p>
