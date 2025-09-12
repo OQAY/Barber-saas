@@ -91,6 +91,7 @@ model Barbershop {
 model Barber {
   id           String     @id @default(uuid())
   name         String
+  slug         String?    @unique
   email        String     @unique
   phone        String?
   photo        String?

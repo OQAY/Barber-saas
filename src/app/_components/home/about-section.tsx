@@ -22,70 +22,69 @@ const AboutSection = () => {
   ]
 
   return (
-    <section className="bg-background py-12 md:py-16">
+    <section className="bg-background py-8 md:py-12">
       <div className="container mx-auto px-5">
-        {/* Título da seção */}
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold mb-2 md:text-3xl">Por que escolher a FSW Barber?</h2>
-          <p className="text-muted-foreground text-sm md:text-base">
-            Tradição e inovação em cada detalhe do seu visual
+        {/* Título da seção mais compacto */}
+        <div className="text-center mb-6">
+          <h2 className="text-xl font-bold mb-1 md:text-2xl">Por que escolher a FSW Barber?</h2>
+          <p className="text-muted-foreground text-xs md:text-sm">
+            Tradição e inovação em cada detalhe
           </p>
         </div>
 
-        {/* Grid com 3 cards */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6 mb-10">
+        {/* Grid com 3 cards mais compactos */}
+        <div className="grid grid-cols-3 gap-3 md:gap-4 mb-6">
           {features.map((feature, index) => (
             <Card key={index} className="border-muted/50 bg-card/50">
-              <CardContent className="p-6 text-center">
-                <div className="mb-4 flex justify-center">
-                  <div className="rounded-full bg-primary/10 p-3">
-                    <feature.icon className="h-8 w-8 text-primary" />
+              <CardContent className="p-3 md:p-4 text-center">
+                <div className="mb-2 flex justify-center">
+                  <div className="rounded-full bg-primary/10 p-2 md:p-3">
+                    <feature.icon className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                   </div>
                 </div>
-                <h3 className="font-semibold mb-2">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground">{feature.description}</p>
+                <h3 className="font-semibold text-xs md:text-sm mb-1">{feature.title}</h3>
+                <p className="text-xs text-muted-foreground hidden md:block">{feature.description}</p>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Seção com imagens e texto */}
-        <div className="rounded-2xl bg-secondary/30 p-6 md:p-10">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-center">
-            {/* Texto */}
+        {/* Seção com imagens e texto mais compacta */}
+        <div className="rounded-xl bg-secondary/30 p-4 md:p-8">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:items-center">
+            {/* Texto mais conciso */}
             <div className="order-2 md:order-1">
-              <h3 className="text-xl font-bold mb-4 md:text-2xl">
-                Um espaço criado para você
+              <h3 className="text-lg font-bold mb-3 md:text-xl">
+                Mais que um corte, uma experiência
               </h3>
-              <p className="text-muted-foreground mb-4 text-sm md:text-base">
-                Nossa barbearia combina o melhor do tradicional com o contemporâneo. 
-                Aqui, cada detalhe foi pensado para proporcionar uma experiência única.
+              <p className="text-muted-foreground mb-3 text-xs md:text-sm">
+                Cada visita é um momento só seu. Relaxe enquanto cuidamos do resto.
               </p>
-              <ul className="space-y-2 text-sm md:text-base">
+              <ul className="space-y-1.5 text-xs md:text-sm">
                 <li className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Ambiente climatizado e confortável</span>
+                  <CheckCircleIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span>Seu horário sempre respeitado</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Agendamento online prático e rápido</span>
+                  <CheckCircleIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span>Agende sem filas pelo app</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Produtos importados de alta qualidade</span>
+                  <CheckCircleIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span>Só trabalhamos com o melhor</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircleIcon className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span>Café e bebidas cortesia</span>
+                  <CheckCircleIcon className="h-4 w-4 text-primary flex-shrink-0" />
+                  <span>Cafézinho na faixa</span>
                 </li>
               </ul>
             </div>
 
-            {/* Grid de 3 imagens */}
+            {/* Grid de 3 imagens menores */}
             <div className="order-1 md:order-2">
-              <div className="grid grid-cols-2 gap-3">
-                {/* Imagem principal grande */}
-                <div className="col-span-2 relative h-48 md:h-64 rounded-xl overflow-hidden">
+              <div className="grid grid-cols-2 gap-2">
+                {/* Imagem principal */}
+                <div className="col-span-2 relative h-32 md:h-48 rounded-lg overflow-hidden">
                   <Image
                     src="https://utfs.io/f/c97a2dc9-cf62-468b-a851-bfd2bdde775f-16p.png"
                     alt="Interior da barbearia"
@@ -94,7 +93,7 @@ const AboutSection = () => {
                   />
                 </div>
                 {/* Duas imagens menores */}
-                <div className="relative h-32 md:h-40 rounded-xl overflow-hidden">
+                <div className="relative h-24 md:h-32 rounded-lg overflow-hidden">
                   <Image
                     src="https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png"
                     alt="Barbeiro trabalhando"
@@ -102,7 +101,7 @@ const AboutSection = () => {
                     className="object-cover"
                   />
                 </div>
-                <div className="relative h-32 md:h-40 rounded-xl overflow-hidden">
+                <div className="relative h-24 md:h-32 rounded-lg overflow-hidden">
                   <Image
                     src="https://utfs.io/f/0522fdaf-0357-4213-8f52-1d83c3dcb6cd-18e.png"
                     alt="Produtos premium"
@@ -115,10 +114,10 @@ const AboutSection = () => {
           </div>
         </div>
 
-        {/* Call to Action sutil */}
-        <div className="text-center mt-8">
-          <p className="text-muted-foreground text-sm">
-            Venha conhecer e fazer parte da família FSW Barber
+        {/* Call to Action mais sutil */}
+        <div className="text-center mt-6">
+          <p className="text-muted-foreground text-xs md:text-sm">
+            Faça parte da família FSW Barber
           </p>
         </div>
       </div>
