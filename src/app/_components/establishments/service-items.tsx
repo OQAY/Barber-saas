@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation"
 interface ServiceItemProps {
   service: BarbershopService
   barbershop: Pick<Barbershop, "name">
+  barberId?: string
 }
 
 const MORNING_TIMES = ["09:00", "10:00", "11:00"]
@@ -54,7 +55,7 @@ const filterAvailableTimes = (
   })
 }
 
-const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
+const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
   const { data } = useSession()
   const router = useRouter()
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(new Date())
@@ -70,11 +71,12 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
       const bookings = await getBookings({
         date: selectedDay,
         serviceId: service.id,
+        barberId: barberId,
       })
       setDayBookings(bookings)
     }
     fetch()
-  }, [selectedDay, service.id])
+  }, [selectedDay, service.id, barberId])
 
   const selectedDate = useMemo(() => {
     if (!selectedDay || !selectedTime) return
@@ -113,6 +115,7 @@ const ServiceItem = ({ service, barbershop }: ServiceItemProps) => {
       if (!selectedDate) return
       await createBooking({
         serviceId: service.id,
+        barberId: barberId,
         date: selectedDate,
       })
       handleBookingSheetOpenChange()
