@@ -17,6 +17,20 @@ interface BarberPageProps {
   }
 }
 
+export async function generateMetadata({ params }: BarberPageProps) {
+  const barber = await db.barber.findUnique({
+    where: { id: params.id },
+    select: { name: true, photo: true }
+  })
+  
+  return {
+    title: barber?.name || 'Barbeiro',
+    openGraph: {
+      images: barber?.photo ? [barber.photo] : [],
+    },
+  }
+}
+
 const BarberPage = async ({ params }: BarberPageProps) => {
   // Busca o barbeiro e a barbearia relacionada
   const barber = await db.barber.findUnique({
@@ -93,12 +107,22 @@ const BarberPage = async ({ params }: BarberPageProps) => {
         {/* Info do Barbeiro sobreposta */}
         <div className="absolute bottom-4 left-4 right-4">
           <div className="flex items-center gap-3">
-            <Avatar className="h-20 w-20 border-2 border-primary">
-              <AvatarImage src={barber.imageUrl || ""} alt={barber.name} />
-              <AvatarFallback>
-                <UserIcon className="h-10 w-10" />
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative h-20 w-20 rounded-full border-2 border-primary overflow-hidden bg-secondary">
+              {barber.photo ? (
+                <Image
+                  src={barber.photo}
+                  alt={barber.name}
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="80px"
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center">
+                  <UserIcon className="h-10 w-10 text-muted-foreground" />
+                </div>
+              )}
+            </div>
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-white">{barber.name}</h1>
               <div className="flex items-center gap-2 mt-1">
@@ -113,19 +137,8 @@ const BarberPage = async ({ params }: BarberPageProps) => {
         </div>
       </div>
 
-      {/* Informações da Barbearia */}
-      <Card className="mx-4 -mt-4 relative z-10">
-        <CardContent className="p-4">
-          <h2 className="font-semibold mb-2">{barbershop.name}</h2>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <MapPinIcon className="h-4 w-4 text-primary" />
-            <p>{barbershop.address}</p>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* Sobre o Barbeiro */}
-      <div className="p-4 mt-4">
+      <div className="p-4">
         <h2 className="text-xs font-bold uppercase text-muted-foreground mb-3">
           Sobre o Profissional
         </h2>
@@ -158,7 +171,7 @@ const BarberPage = async ({ params }: BarberPageProps) => {
           Serviços Disponíveis
         </h2>
         <div className="space-y-3">
-          {barbershop.services
+          {barber.barbershop.services
             .filter((service) => {
               // Filtra serviços baseado nas especialidades do barbeiro
               const serviceCategory = service.name.toLowerCase()
@@ -172,11 +185,12 @@ const BarberPage = async ({ params }: BarberPageProps) => {
                 key={service.id}
                 barbershop={barbershop}
                 service={service}
+                barberId={barber.id}
               />
             ))}
           
           {/* Se não houver filtro específico, mostra todos os serviços */}
-          {barbershop.services.length === 0 && (
+          {barber.barbershop.services.length === 0 && (
             <p className="text-sm text-muted-foreground">
               Nenhum serviço disponível no momento.
             </p>
