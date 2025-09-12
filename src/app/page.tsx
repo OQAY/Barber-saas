@@ -1,5 +1,6 @@
 import Header from "./_components/layout/header"
 import HeroSection from "./_components/layout/hero-section"
+import AboutSection from "./_components/home/about-section"
 import QuickSearch from "./_components/common/quick-search"
 import { Button } from "./_components/ui/button"
 import Image from "next/image"
@@ -58,6 +59,9 @@ export default async function Home() {
       
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Seção Sobre */}
+      <AboutSection />
 
       {/* Seção de boas-vindas */}
       <div className="px-5 pt-5">
