@@ -39,7 +39,7 @@ export default function AgendaGrid({ bookings, barbers }: AgendaGridProps) {
   const [canScrollRight, setCanScrollRight] = useState(true)
 
   // Criar horários do dia (8h às 20h) de 30 em 30 minutos
-  const timeSlots = []
+  const timeSlots: string[] = []
   for (let hour = 8; hour <= 20; hour++) {
     timeSlots.push(`${hour.toString().padStart(2, '0')}:00`)
     if (hour < 20) {

@@ -25,7 +25,25 @@ interface BookingSlotProps {
   timeIndex?: number
 }
 
-export default function BookingSlot({ booking, time, barberId, slotInfo, timeIndex }: BookingSlotProps) {
+export default function BookingSlot({ booking, slotInfo }: BookingSlotProps) {
+  // Hooks devem ser declarados antes de qualquer return
+  const nameRef = useRef<HTMLDivElement>(null)
+  const serviceRef = useRef<HTMLDivElement>(null)
+  const [nameWidth, setNameWidth] = useState(0)
+  const [serviceWidth, setServiceWidth] = useState(0)
+  
+  const isLongName = booking?.user?.name ? booking.user.name.length > 15 : false
+  const isLongService = booking?.service?.name ? booking.service.name.length > 15 : false
+
+  useEffect(() => {
+    if (nameRef.current && isLongName) {
+      setNameWidth(nameRef.current.scrollWidth)
+    }
+    if (serviceRef.current && isLongService) {
+      setServiceWidth(serviceRef.current.scrollWidth)
+    }
+  }, [booking, isLongName, isLongService])
+
   // Slot vazio
   if (!booking || !slotInfo) {
     return (
@@ -69,27 +87,9 @@ export default function BookingSlot({ booking, time, barberId, slotInfo, timeInd
   if (slotInfo.isMiddle || slotInfo.isEnd) {
     return <div className="h-[56px]" />
   }
-
-  // Renderiza apenas no slot inicial com altura expandida para múltiplos slots
-  const nameRef = useRef<HTMLDivElement>(null)
-  const serviceRef = useRef<HTMLDivElement>(null)
-  const [nameWidth, setNameWidth] = useState(0)
-  const [serviceWidth, setServiceWidth] = useState(0)
-  
-  const isLongName = booking.user.name && booking.user.name.length > 15
-  const isLongService = booking.service.name && booking.service.name.length > 15
   
   // Calcula altura baseada no número de slots (58px por slot)
   const cardHeight = slotInfo.totalSlots * 58
-
-  useEffect(() => {
-    if (nameRef.current && isLongName) {
-      setNameWidth(nameRef.current.scrollWidth)
-    }
-    if (serviceRef.current && isLongService) {
-      setServiceWidth(serviceRef.current.scrollWidth)
-    }
-  }, [booking, isLongName, isLongService])
 
   // Calcula duração da animação baseada no tamanho do texto (10px por segundo)
   const nameAnimationDuration = nameWidth ? `${nameWidth / 10}s` : '8s'
