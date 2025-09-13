@@ -51,21 +51,25 @@ export const authOptions: AuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        // Buscar role do usuário no banco
+        const dbUser = await db.user.findUnique({
+          where: { id: user.id },
+          select: { role: true }
+        })
+        token.role = dbUser?.role || "USER"
       }
       return token
     },
     async session({ session, token }) {
       if (token && session.user) {
         (session.user as any).id = token.id as string
+        (session.user as any).role = token.role as string
       }
       return session
     },
   },
   session: {
     strategy: "jwt"
-  },
-  pages: {
-    signIn: "/login",
   },
   secret: process.env.NEXTAUTH_SECRET || process.env.NEXT_AUTH_SECRET,
 }
