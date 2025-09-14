@@ -99,15 +99,15 @@ export default function BookingSlot({ booking, slotInfo }: BookingSlotProps) {
     <div
       className={cn(
         "absolute top-0 left-0 right-0 p-2 cursor-pointer transition-all",
-        "hover:shadow-md hover:z-30",
-        "border rounded",
+        "hover:shadow-lg hover:z-50",
+        "border rounded shadow-sm",
         status.border,
         status.bg,
         status.text
       )}
       style={{
         height: `${cardHeight - 2}px`,
-        zIndex: 20
+        zIndex: 30
       }}
     >
       <div className="flex flex-col h-full text-[10px] leading-tight">

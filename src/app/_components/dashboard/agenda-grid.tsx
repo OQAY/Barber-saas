@@ -176,10 +176,13 @@ export default function AgendaGrid({ bookings, barbers }: AgendaGridProps) {
                 <div
                   key={time}
                   className={cn(
-                    "flex border-b border-gray-100 relative",
+                    "flex relative",
                     isPastTime && "opacity-50",
-                    isCurrentTime && "bg-yellow-50 border-yellow-300"
+                    isCurrentTime && "bg-yellow-50"
                   )}
+                  style={{
+                    borderBottom: timeSlots.indexOf(time) < timeSlots.length - 1 ? '1px solid #e5e7eb' : 'none'
+                  }}
                 >
                   {/* Coluna de horário fixa */}
                   <div className={cn(
@@ -206,8 +209,17 @@ export default function AgendaGrid({ bookings, barbers }: AgendaGridProps) {
                         const key = `${barber.id}-${time}`
                         const slotData = occupiedSlots.get(key)
 
+                        // Para slots iniciais de agendamento, adiciona position relative
+                        const isStartSlot = slotData?.isStart
+                        
                         return (
-                          <div key={key} className="w-[130px] flex-shrink-0 p-1 border-r h-[58px] relative">
+                          <div 
+                            key={key} 
+                            className={cn(
+                              "w-[130px] flex-shrink-0 p-1 border-r h-[58px]",
+                              isStartSlot && "relative z-20"
+                            )}
+                          >
                             <BookingSlot
                               booking={slotData?.booking}
                               time={time}

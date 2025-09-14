@@ -5,7 +5,7 @@ import { Users } from "lucide-react"
 import Header from "../_components/layout/header"
 import NextClients from "../_components/dashboard/next-clients"
 import QuickActions from "../_components/dashboard/quick-actions"
-import AgendaGrid from "../_components/dashboard/agenda-grid"
+import AgendaGrid from "../_components/dashboard/agenda-grid-v2"
 
 export default function DashboardMock() {
   // Dados mockados para visualização com mais barbeiros
