@@ -189,36 +189,13 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
                     <SheetTitle>Fazer Reserva</SheetTitle>
                   </SheetHeader>
 
-                  <div className="border-b border-solid">
+                  <div className="border-b border-solid py-5">
                     <Calendar
                       mode="single"
                       locale={ptBR}
                       selected={selectedDay}
                       onSelect={handleDateSelect}
                       fromDate={new Date()}
-                      styles={{
-                        head_cell: {
-                          width: "100%",
-                          textTransform: "capitalize",
-                        },
-                        cell: {
-                          width: "100%",
-                        },
-                        button: {
-                          width: "100%",
-                        },
-                        nav_button_previous: {
-                          width: "32px",
-                          height: "32px",
-                        },
-                        nav_button_next: {
-                          width: "32px",
-                          height: "32px",
-                        },
-                        caption: {
-                          textTransform: "capitalize",
-                        },
-                      }}
                     />
                   </div>
 
