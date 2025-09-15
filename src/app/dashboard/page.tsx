@@ -5,344 +5,173 @@ import { Users } from "lucide-react"
 import Header from "../_components/layout/header"
 import NextClients from "../_components/dashboard/next-clients"
 import QuickActions from "../_components/dashboard/quick-actions"
-import AgendaGrid from "../_components/dashboard/agenda-grid-v2"
+import AgendaGrid from "../_components/dashboard/agenda-grid-v4"
+import TestBookings from "../_components/dashboard/test-bookings"
+import { db } from "@/app/_lib/prisma"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/_lib/Auth"
+import { redirect } from "next/navigation"
 
-export default function DashboardMock() {
-  // Dados mockados para visualização com mais barbeiros
-  const mockBarbers = [
-    { id: "1", name: "João Silva" },
-    { id: "2", name: "Pedro Santos" },
-    { id: "3", name: "Carlos Oliveira" },
-    { id: "4", name: "André Martins" },
-    { id: "5", name: "Bruno Costa" },
-    { id: "6", name: "Felipe Souza" }
-  ]
+export default async function Dashboard() {
+  // Verificar autenticação
+  const session = await getServerSession(authOptions)
 
-  const now = new Date()
-  const today = new Date()
-  
-  // Função helper para criar data com hora específica
-  const setTime = (hours: number, minutes: number = 0) => {
-    const date = new Date(today)
-    date.setHours(hours, minutes, 0, 0)
-    return date
+  if (!session?.user) {
+    redirect("/login")
   }
-  
-  const mockBookings = [
-    // Agendamentos completos da manhã
-    {
-      id: "1",
-      date: setTime(8, 0),
-      duration: 60, // 1 hora - padrão
-      status: "COMPLETED",
-      barberId: "1",
-      user: {
-        name: "Carlos Alberto da Silva Pereira",
-        image: null,
-        phone: "(11) 98765-4321"
-      },
-      service: {
-        name: "Corte + Barba",
-        duration: 60
-      },
-      barber: {
-        name: "João Silva"
-      }
+
+  // Verificar se usuário tem permissão (barbeiro, gerente ou dono)
+  const user = await db.user.findUnique({
+    where: { id: (session.user as any).id },
+    select: { role: true }
+  })
+
+  if (!user || user.role === "USER") {
+    redirect("/") // Usuários comuns não podem acessar o dashboard
+  }
+
+  // Buscar dados do dia atual
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+
+  // Buscar barbeiros ativos
+  const barbers = await db.barber.findMany({
+    where: {
+      isActive: true
     },
-    {
-      id: "2",
-      date: setTime(8, 30),
-      duration: 30, // 30 min - serviço rápido
-      status: "COMPLETED",
-      barberId: "2",
-      user: {
-        name: "José Santos",
-        image: null,
-        phone: "(11) 91234-5678"
-      },
-      service: {
-        name: "Barba Express",
-        duration: 30
-      },
-      barber: {
-        name: "Pedro Santos"
-      }
-    },
-    {
-      id: "3",
-      date: setTime(9, 0),
-      duration: 90, // 1h30 - serviço estendido
-      status: "COMPLETED",
-      barberId: "3",
-      user: {
-        name: "Roberto Nascimento",
-        image: null,
-        phone: "(11) 95555-5555"
-      },
-      service: {
-        name: "Progressiva + Corte",
-        duration: 90
-      },
-      barber: {
-        name: "Carlos Oliveira"
-      }
-    },
-    
-    // Agendamentos em andamento (horário atual)
-    {
-      id: "4",
-      date: setTime(10, 0),
-      duration: 120, // 2 horas - coloração
-      status: "IN_PROGRESS",
-      barberId: "1",
-      user: {
-        name: "Marcelo Rodrigues de Almeida",
-        image: null,
-        phone: "(11) 94444-4444"
-      },
-      service: {
-        name: "Coloração + Tratamento",
-        duration: 120
-      },
-      barber: {
-        name: "João Silva"
-      }
-    },
-    {
-      id: "5",
-      date: setTime(10, 30),
-      duration: 60,
-      status: "IN_PROGRESS",
-      barberId: "4",
-      user: {
-        name: "Fernando Lima",
-        image: null,
-        phone: "(11) 93333-3333"
-      },
-      service: {
-        name: "Corte Degradê",
-        duration: 60
-      },
-      barber: {
-        name: "André Martins"
-      }
-    },
-    
-    // Próximos agendamentos
-    {
-      id: "6",
-      date: setTime(11, 30),
-      duration: 60,
-      status: "SCHEDULED",
-      barberId: "2",
-      user: {
-        name: "Paulo Henrique",
-        image: null,
-        phone: "(11) 92222-2222"
-      },
-      service: {
-        name: "Corte Social",
-        duration: 60
-      },
-      barber: {
-        name: "Pedro Santos"
-      }
-    },
-    {
-      id: "7",
-      date: setTime(12, 0),
-      duration: 150, // 2h30 - luzes
-      status: "SCHEDULED",
-      barberId: "3",
-      user: {
-        name: "João Pedro Fernandes Costa Silva",
-        image: null,
-        phone: "(11) 91111-1111"
-      },
-      service: {
-        name: "Luzes + Corte + Tratamento",
-        duration: 150
-      },
-      barber: {
-        name: "Carlos Oliveira"
-      }
-    },
-    
-    // Tarde
-    {
-      id: "8",
-      date: setTime(14, 0),
-      duration: 60,
-      status: "SCHEDULED",
-      barberId: "5",
-      user: {
-        name: "Ricardo Oliveira",
-        image: null,
-        phone: "(11) 90000-0000"
-      },
-      service: {
-        name: "Corte + Barba",
-        duration: 60
-      },
-      barber: {
-        name: "Bruno Costa"
-      }
-    },
-    {
-      id: "9",
-      date: setTime(14, 30),
-      duration: 90,
-      status: "SCHEDULED",
-      barberId: "6",
-      user: {
-        name: "Eduardo Silva",
-        image: null,
-        phone: "(11) 99999-9999"
-      },
-      service: {
-        name: "Relaxamento + Corte",
-        duration: 90
-      },
-      barber: {
-        name: "Felipe Souza"
-      }
-    },
-    {
-      id: "10",
-      date: setTime(15, 0),
-      duration: 60,
-      status: "SCHEDULED",
-      barberId: "1",
-      user: {
-        name: "Gabriel Santos",
-        image: null,
-        phone: "(11) 98888-8888"
-      },
-      service: {
-        name: "Corte Navalhado",
-        duration: 60
-      },
-      barber: {
-        name: "João Silva"
-      }
-    },
-    {
-      id: "11",
-      date: setTime(16, 0),
-      duration: 120,
-      status: "SCHEDULED",
-      barberId: "2",
-      user: {
-        name: "Antônio Carlos de Souza Filho",
-        image: null,
-        phone: "(11) 97777-7777"
-      },
-      service: {
-        name: "Alisamento + Corte",
-        duration: 120
-      },
-      barber: {
-        name: "Pedro Santos"
-      }
-    },
-    {
-      id: "12",
-      date: setTime(17, 30),
-      duration: 60,
-      status: "SCHEDULED",
-      barberId: "4",
-      user: {
-        name: "Thiago Mendes",
-        image: null,
-        phone: "(11) 96666-6666"
-      },
-      service: {
-        name: "Corte + Sobrancelha",
-        duration: 60
-      },
-      barber: {
-        name: "André Martins"
-      }
-    },
-    {
-      id: "13",
-      date: setTime(18, 0),
-      duration: 60,
-      status: "SCHEDULED",
-      barberId: "5",
-      user: {
-        name: "Pedro Augusto",
-        image: null,
-        phone: "(11) 95555-5555"
-      },
-      service: {
-        name: "Corte Infantil",
-        duration: 60
-      },
-      barber: {
-        name: "Bruno Costa"
-      }
-    },
-    {
-      id: "14",
-      date: setTime(19, 0),
-      duration: 60,
-      status: "SCHEDULED",
-      barberId: "6",
-      user: {
-        name: "Leonardo Batista",
-        image: null,
-        phone: "(11) 94444-4444"
-      },
-      service: {
-        name: "Corte + Barba",
-        duration: 60
-      },
-      barber: {
-        name: "Felipe Souza"
-      }
+    orderBy: {
+      name: 'asc'
     }
-  ]
+  })
+
+  // Buscar agendamentos do dia
+  const bookings = await db.booking.findMany({
+    where: {
+      date: {
+        gte: today,
+        lt: tomorrow
+      }
+    },
+    include: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+          image: true
+        }
+      },
+      service: {
+        select: {
+          name: true,
+          price: true
+        }
+      },
+      barber: {
+        select: {
+          id: true,
+          name: true
+        }
+      }
+    },
+    orderBy: {
+      date: 'asc'
+    }
+  })
+
+  // Formatar dados para o componente
+  const formattedBookings = bookings.map(booking => ({
+    id: booking.id,
+    date: booking.date,
+    duration: 60, // Duração padrão de 60 minutos (será melhorado quando adicionarmos duration no schema)
+    status: booking.status,
+    barberId: booking.barberId,
+    user: {
+      name: booking.user.name,
+      image: booking.user.image,
+      phone: booking.user.email // Temporário até termos campo phone
+    },
+    service: {
+      name: booking.service.name,
+      duration: 60 // Duração padrão
+    },
+    barber: {
+      name: booking.barber.name
+    }
+  }))
 
   // Filtrar próximos clientes (próximas 2 horas)
   const currentTime = new Date()
   const nextTwoHours = new Date()
   nextTwoHours.setHours(nextTwoHours.getHours() + 2)
-  
-  const upcomingBookings = mockBookings.filter(
-    booking => booking.date >= currentTime && booking.date <= nextTwoHours
+
+  const upcomingBookings = formattedBookings.filter(
+    booking => {
+      const bookingTime = new Date(booking.date)
+      return bookingTime >= currentTime && bookingTime <= nextTwoHours && booking.status === "SCHEDULED"
+    }
   )
 
   return (
     <>
       <Header />
-      
-      <div className="p-5 space-y-6">
+
+      <div className="p-3 sm:p-5 space-y-4 sm:space-y-6">
         {/* Header do Dashboard */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold">Agenda do Dia</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-xl sm:text-2xl font-bold">Agenda do Dia</h1>
+            <p className="text-sm sm:text-base text-muted-foreground">
               {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })}
             </p>
           </div>
-          
-          <Button size="lg" className="gap-2">
+
+          <Button size="default" className="gap-2 w-full sm:w-auto">
             <Users className="h-4 w-4" />
-            Novo Encaixe
+            <span className="hidden sm:inline">Novo Encaixe</span>
+            <span className="sm:hidden">Encaixe</span>
           </Button>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Coluna 1: Próximos Clientes e Ações */}
-          <div className="lg:col-span-1 space-y-4">
-            <NextClients bookings={upcomingBookings} />
-            <QuickActions />
+        {/* Estatísticas rápidas */}
+        <div className="grid grid-cols-2 gap-2 sm:gap-4 lg:grid-cols-4">
+          <div className="bg-card p-3 sm:p-4 rounded-lg border">
+            <p className="text-xs sm:text-sm text-muted-foreground">Total Hoje</p>
+            <p className="text-xl sm:text-2xl font-bold">{bookings.length}</p>
+          </div>
+          <div className="bg-card p-3 sm:p-4 rounded-lg border">
+            <p className="text-xs sm:text-sm text-muted-foreground">Confirmados</p>
+            <p className="text-xl sm:text-2xl font-bold">
+              {bookings.filter(b => b.status === "SCHEDULED").length}
+            </p>
+          </div>
+          <div className="bg-card p-3 sm:p-4 rounded-lg border">
+            <p className="text-xs sm:text-sm text-muted-foreground">Em Atendimento</p>
+            <p className="text-xl sm:text-2xl font-bold">
+              {bookings.filter(b => b.status === "IN_PROGRESS").length}
+            </p>
+          </div>
+          <div className="bg-card p-3 sm:p-4 rounded-lg border">
+            <p className="text-xs sm:text-sm text-muted-foreground">Concluídos</p>
+            <p className="text-xl sm:text-2xl font-bold">
+              {bookings.filter(b => b.status === "COMPLETED").length}
+            </p>
+          </div>
+        </div>
+
+        {/* Layout responsivo - Mobile first, depois desktop */}
+        <div className="space-y-4 lg:space-y-0 lg:grid lg:gap-6 lg:grid-cols-3">
+          {/* Mobile: Agenda primeiro / Desktop: Coluna 2-3 */}
+          <div className="lg:col-span-2 lg:order-2">
+            <AgendaGrid bookings={formattedBookings} barbers={barbers} />
           </div>
 
-          {/* Coluna 2-3: Grid de Agenda */}
-          <div className="lg:col-span-2">
-            <AgendaGrid bookings={mockBookings} barbers={mockBarbers} />
+          {/* Mobile: Cards depois / Desktop: Coluna 1 */}
+          <div className="space-y-4 lg:col-span-1 lg:order-1">
+            <NextClients bookings={upcomingBookings} />
+            <QuickActions />
+            <TestBookings barbers={barbers} />
           </div>
         </div>
       </div>
