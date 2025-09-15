@@ -207,7 +207,7 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
                           <Sun className="text-yellow-500" />
                           <span className="text-sm font-semibold">Manhã</span>
                         </div>
-                        <div className="flex gap-2 overflow-x-auto px-4">
+                        <div className="flex flex-wrap gap-2 px-4">
                           {morningTimes.length > 0 ? (
                             morningTimes.map((time) => (
                               <Button
@@ -233,7 +233,7 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
                           <CloudSun className="text-orange-500" />
                           <span className="text-sm font-semibold">Tarde</span>
                         </div>
-                        <div className="flex gap-2 overflow-x-auto px-4">
+                        <div className="flex flex-wrap gap-2 px-4">
                           {afternoonTimes.length > 0 ? (
                             afternoonTimes.map((time) => (
                               <Button
@@ -259,7 +259,7 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
                           <Moon className="text-blue-500" />
                           <span className="text-sm font-semibold">Noite</span>
                         </div>
-                        <div className="flex gap-2 overflow-x-auto px-4">
+                        <div className="flex flex-wrap gap-2 px-4">
                           {eveningTimes.length > 0 ? (
                             eveningTimes.map((time) => (
                               <Button
