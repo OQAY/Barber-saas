@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     // Check if user has permission (only staff can create test data)
     const user = await db.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: session.user.id },
       select: { role: true }
     })
 
@@ -25,7 +25,15 @@ export async function POST(request: Request) {
 
     // Create all bookings
     const createdBookings = await Promise.all(
-      bookings.map(async (booking: any) => {
+      bookings.map(async (booking: {
+        barberId: string
+        clientName: string
+        serviceName: string
+        date: string
+        duration: number
+        status: "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED"
+        price: number
+      }) => {
         // Find or create a test user
         let testUser = await db.user.findFirst({
           where: { email: `${booking.clientName.toLowerCase().replace(/ /g, '.')}@test.com` }
@@ -108,7 +116,7 @@ export async function DELETE() {
 
     // Check if user has permission
     const user = await db.user.findUnique({
-      where: { id: (session.user as any).id },
+      where: { id: session.user.id },
       select: { role: true }
     })
 

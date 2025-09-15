@@ -5,6 +5,31 @@ import { Adapter } from "next-auth/adapters"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
+import { UserRole } from "@prisma/client"
+
+// Extend NextAuth types
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      email?: string | null
+      name?: string | null
+      image?: string | null
+      role?: UserRole
+    }
+  }
+  interface User {
+    id: string
+    role?: UserRole
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string
+    role?: UserRole
+  }
+}
 
 export const authOptions: AuthOptions = {
   adapter: PrismaAdapter(db) as Adapter,
@@ -62,8 +87,8 @@ export const authOptions: AuthOptions = {
     },
     async session({ session, token }) {
       if (token && session.user) {
-        (session.user as any).id = token.id as string
-        (session.user as any).role = token.role as string
+        session.user.id = token.id as string
+        session.user.role = token.role as UserRole
       }
       return session
     },

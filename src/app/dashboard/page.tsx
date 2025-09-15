@@ -4,8 +4,7 @@ import { Button } from "@/app/_components/ui/button"
 import { Users } from "lucide-react"
 import Header from "../_components/layout/header"
 import NextClients from "../_components/dashboard/next-clients"
-import QuickActions from "../_components/dashboard/quick-actions"
-import AgendaGrid from "../_components/dashboard/agenda-grid-v4"
+import AgendaGrid from "../_components/dashboard/agenda-grid"
 import TestBookings from "../_components/dashboard/test-bookings"
 import { db } from "@/app/_lib/prisma"
 import { getServerSession } from "next-auth"
@@ -22,7 +21,7 @@ export default async function Dashboard() {
 
   // Verificar se usuário tem permissão (barbeiro, gerente ou dono)
   const user = await db.user.findUnique({
-    where: { id: (session.user as any).id },
+    where: { id: session.user.id },
     select: { role: true }
   })
 
@@ -170,7 +169,6 @@ export default async function Dashboard() {
           {/* Mobile: Cards depois / Desktop: Coluna 1 */}
           <div className="space-y-4 lg:col-span-1 lg:order-1">
             <NextClients bookings={upcomingBookings} />
-            <QuickActions />
             <TestBookings barbers={barbers} />
           </div>
         </div>

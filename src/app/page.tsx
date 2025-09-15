@@ -2,56 +2,61 @@ import Header from "./_components/layout/header"
 import HeroSection from "./_components/layout/hero-section"
 import AboutSection from "./_components/home/about-section"
 import QuickSearch from "./_components/common/quick-search"
-import { Button } from "./_components/ui/button"
 import Image from "next/image"
 import { db } from "./_lib/prisma"
 import BarberItem from "./_components/staff/barber-item"
 import BookingItem from "./_components/booking/booking-item"
-import Link from "next/link"
 import { getServerSession } from "next-auth"
 import { authOptions } from "../app/_lib/Auth"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 
 export default async function Home() {
-  // Obtem a sessão do usuário
-  const session = await getServerSession(authOptions)
+  try {
+    // Obtem a sessão do usuário
+    const session = await getServerSession(authOptions)
 
-  // Busca os barbeiros através da barbearia e os agendamentos confirmados do usuário
-  const [barbershopWithBarbers, bookings] = await Promise.all([
-    db.barbershop.findFirst({
-      include: {
-        barbers: {
-          where: {
-            isActive: true,
-          },
-          orderBy: {
-            name: "asc",
+    // Busca os barbeiros através da barbearia e os agendamentos confirmados do usuário
+    const [barbershopWithBarbers, bookings] = await Promise.all([
+      db.barbershop.findFirst({
+        include: {
+          barbers: {
+            where: {
+              isActive: true,
+            },
+            orderBy: {
+              name: "asc",
+            },
           },
         },
-      },
-    }),
-    session?.user
-      ? db.booking.findMany({
-          where: {
-            userId: (session.user as any).id,
-            date: {
-              gte: new Date(),
-            },
-          },
-          include: {
-            service: {
-              include: {
-                barbershop: true,
+      }).catch(err => {
+        console.error("Error fetching barbershop:", err)
+        return null
+      }),
+      session?.user
+        ? db.booking.findMany({
+            where: {
+              userId: session.user.id,
+              date: {
+                gte: new Date(),
               },
             },
-            barber: true,
-          },
-        })
-      : Promise.resolve([]),
-  ])
+            include: {
+              service: {
+                include: {
+                  barbershop: true,
+                },
+              },
+              barber: true,
+            },
+          }).catch(err => {
+            console.error("Error fetching bookings:", err)
+            return []
+          })
+        : Promise.resolve([]),
+    ])
 
-  const barbers = barbershopWithBarbers?.barbers || []
+    const barbers = barbershopWithBarbers?.barbers || []
 
   return (
     <div>
@@ -132,4 +137,47 @@ export default async function Home() {
       </div>
     </div>
   )
+  } catch (error) {
+    console.error("Home page error:", error)
+    // Retorna uma versão simplificada da página em caso de erro
+    return (
+      <div>
+        <Header />
+        <HeroSection />
+        <AboutSection />
+
+        <div className="px-5 pt-5">
+          <h2 className="text-xl font-bold">
+            Olá! Vamos agendar um corte hoje?
+          </h2>
+          <p className="text-sm capitalize">
+            {format(new Date(), "EEEE',' dd 'de' MMMM", {
+              locale: ptBR,
+            })}
+          </p>
+        </div>
+
+        <QuickSearch />
+
+        <div className="relative mt-6 h-[150px] w-full">
+          <Image
+            src="/banner-01.png"
+            alt="Agende nos melhores com FSW Barber"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="rounded-xl object-cover"
+          />
+        </div>
+
+        <div className="px-5 py-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800 text-sm">
+              Estamos com problemas técnicos temporários. Por favor, tente novamente em alguns instantes.
+            </p>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }
