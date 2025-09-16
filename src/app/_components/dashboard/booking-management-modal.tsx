@@ -127,17 +127,17 @@ export default function BookingManagementModal({
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      SCHEDULED: { label: "Agendado", variant: "default" as const, icon: Clock },
-      IN_PROGRESS: { label: "Em Atendimento", variant: "secondary" as const, icon: PlayCircle },
-      COMPLETED: { label: "Concluído", variant: "success" as const, icon: CheckCircle2 },
-      CANCELLED: { label: "Cancelado", variant: "destructive" as const, icon: XCircle },
+      SCHEDULED: { label: "Agendado", variant: "default" as const, icon: Clock, className: "" },
+      IN_PROGRESS: { label: "Em Atendimento", variant: "secondary" as const, icon: PlayCircle, className: "" },
+      COMPLETED: { label: "Concluído", variant: "default" as const, icon: CheckCircle2, className: "bg-green-500 text-white border-green-500" },
+      CANCELLED: { label: "Cancelado", variant: "destructive" as const, icon: XCircle, className: "" },
     }
 
     const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.SCHEDULED
     const Icon = config.icon
 
     return (
-      <Badge variant={config.variant} className="gap-1">
+      <Badge variant={config.variant} className={cn("gap-1", config.className)}>
         <Icon className="h-3 w-3" />
         {config.label}
       </Badge>
