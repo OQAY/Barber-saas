@@ -37,11 +37,34 @@ export default async function DashboardOperacional() {
     orderBy: { name: "asc" }
   })
 
+  // Formatar bookings para os componentes
+  const formattedBookings = todayBookings.map(booking => ({
+    id: booking.id,
+    date: booking.date,
+    duration: 60, // Duração padrão
+    status: booking.status,
+    barberId: booking.barberId,
+    user: {
+      name: booking.user.name,
+      image: booking.user.image,
+      phone: booking.user.phone
+    },
+    service: {
+      name: booking.service.name,
+      price: Number(booking.service.price), // Converter Decimal para number
+      duration: 60 // Duração padrão
+    },
+    barber: {
+      id: booking.barber.id,
+      name: booking.barber.name
+    }
+  }))
+
   // Próximos clientes (próximas 2 horas)
   const nextTwoHours = new Date()
   nextTwoHours.setHours(nextTwoHours.getHours() + 2)
-  
-  const upcomingBookings = todayBookings.filter(
+
+  const upcomingBookings = formattedBookings.filter(
     booking => booking.date >= new Date() && booking.date <= nextTwoHours
   )
 
@@ -69,12 +92,12 @@ export default async function DashboardOperacional() {
           {/* Coluna 1: Próximos Clientes e Ações */}
           <div className="lg:col-span-1 space-y-4">
             <NextClients bookings={upcomingBookings} />
-            <QuickActions bookings={todayBookings} />
+            <QuickActions bookings={formattedBookings} />
           </div>
 
           {/* Coluna 2-3: Grid de Agenda */}
           <div className="lg:col-span-2">
-            <AgendaGrid bookings={todayBookings} barbers={barbers} />
+            <AgendaGrid bookings={formattedBookings} barbers={barbers} />
           </div>
         </div>
       </div>
