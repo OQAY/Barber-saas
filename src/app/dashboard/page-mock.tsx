@@ -69,7 +69,7 @@ export default async function DashboardOperacional() {
           {/* Coluna 1: Próximos Clientes e Ações */}
           <div className="lg:col-span-1 space-y-4">
             <NextClients bookings={upcomingBookings} />
-            <QuickActions />
+            <QuickActions bookings={todayBookings} />
           </div>
 
           {/* Coluna 2-3: Grid de Agenda */}
