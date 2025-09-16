@@ -96,6 +96,7 @@ export default async function Dashboard() {
       duration: 60 // Duração padrão
     },
     barber: {
+      id: booking.barber.id,
       name: booking.barber.name
     }
   }))
