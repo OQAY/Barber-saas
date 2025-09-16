@@ -14,10 +14,17 @@ interface Booking {
   barberId: string
   user: {
     name: string | null
+    image?: string | null
+    phone?: string | null
   }
   service: {
     name: string
+    price?: number
     duration?: number
+  }
+  barber: {
+    name: string
+    id: string
   }
 }
 
