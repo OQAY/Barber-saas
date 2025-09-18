@@ -13,6 +13,13 @@ import { ptBR } from "date-fns/locale"
 
 export default async function Home() {
   try {
+    // Debug: logs de ambiente
+    console.log("=== HOME PAGE DEBUG ===")
+    console.log("NODE_ENV:", process.env.NODE_ENV)
+    console.log("VERCEL:", process.env.VERCEL)
+    console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL)
+    console.log("DIRECT_DATABASE_URL exists:", !!process.env.DIRECT_DATABASE_URL)
+
     // Obtem a sessão do usuário
     const session = await getServerSession(authOptions)
 
