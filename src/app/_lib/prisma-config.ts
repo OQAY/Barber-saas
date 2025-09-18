@@ -33,9 +33,9 @@ export function getDatabaseUrl(): string {
  */
 export const getLogLevel = () => {
   if (isDevelopment) {
-    return ['query', 'error', 'warn'] as const
+    return ['query', 'error', 'warn']
   }
-  return ['error'] as const
+  return ['error']
 }
 
 /**
