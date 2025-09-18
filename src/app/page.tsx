@@ -13,26 +13,30 @@ import { ptBR } from "date-fns/locale"
 
 export default async function Home() {
   try {
+    // Debug: logs de ambiente
+    console.log("=== HOME PAGE DEBUG ===")
+    console.log("NODE_ENV:", process.env.NODE_ENV)
+    console.log("VERCEL:", process.env.VERCEL)
+    console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL)
+    console.log("DIRECT_DATABASE_URL exists:", !!process.env.DIRECT_DATABASE_URL)
+
     // Obtem a sessão do usuário
     const session = await getServerSession(authOptions)
 
     // Busca os barbeiros através da barbearia e os agendamentos confirmados do usuário
     const [barbershopWithBarbers, bookings] = await Promise.all([
       db.barbershop.findFirst({
-        include: {
-          barbers: {
-            where: {
-              isActive: true,
-            },
-            orderBy: {
-              name: "asc",
+          include: {
+            barbers: {
+              where: {
+                isActive: true,
+              },
+              orderBy: {
+                name: "asc",
+              },
             },
           },
-        },
-      }).catch(err => {
-        console.error("Error fetching barbershop:", err)
-        return null
-      }),
+        }),
       session?.user
         ? db.booking.findMany({
             where: {
