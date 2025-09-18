@@ -19,20 +19,17 @@ export default async function Home() {
     // Busca os barbeiros através da barbearia e os agendamentos confirmados do usuário
     const [barbershopWithBarbers, bookings] = await Promise.all([
       db.barbershop.findFirst({
-        include: {
-          barbers: {
-            where: {
-              isActive: true,
-            },
-            orderBy: {
-              name: "asc",
+          include: {
+            barbers: {
+              where: {
+                isActive: true,
+              },
+              orderBy: {
+                name: "asc",
+              },
             },
           },
-        },
-      }).catch(err => {
-        console.error("Error fetching barbershop:", err)
-        return null
-      }),
+        }),
       session?.user
         ? db.booking.findMany({
             where: {
