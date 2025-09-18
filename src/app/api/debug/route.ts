@@ -4,7 +4,7 @@ import { db } from '@/app/_lib/prisma'
 
 export async function GET() {
   try {
-    const debugInfo = {
+    const debugInfo: any = {
       environment: {
         NODE_ENV: process.env.NODE_ENV,
         VERCEL: process.env.VERCEL,
