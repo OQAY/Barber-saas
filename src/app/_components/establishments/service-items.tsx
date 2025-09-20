@@ -112,7 +112,7 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
 
   const handleCreateBooking = async () => {
     try {
-      if (!selectedDate) return
+      if (!selectedDate || !barberId) return
       await createBooking({
         serviceId: service.id,
         barberId: barberId,

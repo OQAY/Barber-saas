@@ -32,6 +32,7 @@ import {
   AlertDialogTrigger,
 } from "../ui/alert-dialog"
 import { cancelBooking } from "../../_actions/cancel-booking"
+import { getCompanyDisplayName } from "../../_constants/company"
 
 interface BookingItemProps {
   booking: Prisma.BookingGetPayload<{
@@ -58,8 +59,12 @@ const BookingItem = ({ booking }: BookingItemProps) => {
       await cancelBooking(booking.id)
       toast.success("Reserva cancelada com sucesso!")
     } catch (error) {
-      console.error(error)
-      toast.error("Falha ao cancelar a reserva.")
+      // Exibe mensagem de erro específica para o usuário
+      const errorMessage = error instanceof Error
+        ? error.message
+        : "Falha ao cancelar a reserva. Tente novamente."
+
+      toast.error(errorMessage)
     } finally {
       setIsDeleteLoading(false)
     }
@@ -130,7 +135,7 @@ const BookingItem = ({ booking }: BookingItemProps) => {
                       {booking.barber.name}
                     </h2>
                     <h3 className="overflow-hidden text-ellipsis text-nowrap text-xs">
-                      FSW Barber
+                      {getCompanyDisplayName()}
                     </h3>
                   </div>
                 </CardContent>

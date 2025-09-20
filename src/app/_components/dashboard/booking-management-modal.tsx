@@ -31,11 +31,13 @@ import {
   DollarSign,
   AlertCircle,
   RefreshCw,
+  Trash2,
 } from "lucide-react"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { useState } from "react"
 import { updateBookingStatus } from "@/app/_actions/update-booking-status"
+import { deleteBooking } from "@/app/_actions/delete-booking"
 import { toast } from "sonner"
 import { cn } from "@/app/_lib/utils"
 
@@ -120,6 +122,31 @@ export default function BookingManagementModal({
       setTimeout(onClose, 500)
     } catch (error) {
       toast.error("Erro ao remarcar agendamento")
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleDeleteBooking = async () => {
+    if (!confirm("Tem certeza que deseja retirar este agendamento da lista? Esta ação não pode ser desfeita.")) {
+      return
+    }
+
+    setIsLoading(true)
+
+    try {
+      const result = await deleteBooking(booking.id)
+
+      if (result.success) {
+        toast.success("Agendamento removido da lista com sucesso!")
+        setTimeout(onClose, 500) // Fecha modal após sucesso
+        // Força atualização da página para refletir a mudança
+        window.location.reload()
+      } else {
+        toast.error(result.error || "Erro ao remover agendamento")
+      }
+    } catch (error) {
+      toast.error("Erro ao remover agendamento")
     } finally {
       setIsLoading(false)
     }
@@ -285,6 +312,25 @@ export default function BookingManagementModal({
                   Cliente Cancelou
                 </Button>
               </div>
+
+              {/* Botão para Retirar da Lista - só aparece se estiver cancelado */}
+              {booking.status === "CANCELLED" && (
+                <div className="mt-4 pt-4 border-t">
+                  <div className="text-sm text-muted-foreground mb-3 flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4" />
+                    Este agendamento foi cancelado. Você pode removê-lo da lista para liberar o horário.
+                  </div>
+                  <Button
+                    variant="destructive"
+                    className="w-full justify-center gap-2"
+                    onClick={handleDeleteBooking}
+                    disabled={isLoading}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Retirar da Lista
+                  </Button>
+                </div>
+              )}
             </TabsContent>
 
             {/* Tab de Reagendamento */}

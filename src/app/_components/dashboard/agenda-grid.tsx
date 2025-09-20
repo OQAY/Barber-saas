@@ -163,6 +163,21 @@ export default function AgendaGridV4({ bookings, barbers }: AgendaGridProps) {
     scrollContainerRef.current.scrollLeft = scrollLeft + distance
   }
 
+  // Prevent vertical scroll inside agenda
+  const handleWheel = (e: React.WheelEvent) => {
+    if (!scrollContainerRef.current) return
+
+    // Only allow horizontal scroll (deltaX) and block vertical scroll (deltaY)
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+      // Horizontal scroll - allow it
+      scrollContainerRef.current.scrollLeft += e.deltaX
+    }
+
+    // Always prevent the default behavior to stop page scroll
+    e.preventDefault()
+    e.stopPropagation()
+  }
+
   useEffect(() => {
     // Adicionar estilos globais para esconder scrollbar mas manter funcionalidade
     const style = document.createElement('style')
@@ -188,7 +203,7 @@ export default function AgendaGridV4({ bookings, barbers }: AgendaGridProps) {
         <CardTitle className="text-base sm:text-lg">Agenda Completa</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden" onWheel={handleWheel}>
           {/* Container principal com overflow */}
           <div className="flex">
             {/* Coluna de horários - FIXA */}
@@ -228,6 +243,7 @@ export default function AgendaGridV4({ bookings, barbers }: AgendaGridProps) {
               onMouseLeave={handleMouseLeave}
               onTouchStart={handleTouchStart}
               onTouchMove={handleTouchMove}
+              onWheel={handleWheel}
             >
               <div className="flex min-w-max">
                 {barbers.map((barber) => (

@@ -1,5 +1,6 @@
 import { Card, CardContent } from "../ui/card"
 import { MapPinIcon, PhoneIcon, MailIcon, ClockIcon } from "lucide-react"
+import { getCompanyDisplayName } from "../../_constants/company"
 
 const Footer = () => {
   return (
@@ -9,7 +10,7 @@ const Footer = () => {
         <div className="grid grid-cols-2 gap-4 text-sm md:grid-cols-4 md:gap-8">
           {/* Logo e Descrição - ocupa 2 colunas no mobile */}
           <div className="col-span-2 md:col-span-1">
-            <h3 className="mb-2 font-bold md:mb-3 md:text-base">FSW Barber</h3>
+            <h3 className="mb-2 font-bold md:mb-3 md:text-base">{getCompanyDisplayName()}</h3>
             <p className="text-xs text-muted-foreground md:text-sm">
               Onde estilo encontra tradição. Desde 2020.
             </p>
@@ -65,7 +66,7 @@ const Footer = () => {
         {/* Copyright mais compacto */}
         <div className="text-center">
           <p className="text-xs text-muted-foreground md:text-sm">
-            © 2025 FSW Barber. Todos os direitos reservados.
+            © 2025 {getCompanyDisplayName()}. Todos os direitos reservados.
           </p>
         </div>
       </div>

@@ -1,0 +1,8 @@
+{
+  "moderate": true,
+  "high": true,
+  "critical": true,
+  "allowlist": [],
+  "skipAudit": false,
+  "registry": "https://registry.npmjs.org"
+}
