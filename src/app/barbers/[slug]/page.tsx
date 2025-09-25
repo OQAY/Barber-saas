@@ -232,7 +232,10 @@ const BarberPage = async ({ params }: BarberPageProps) => {
               <ServiceItem
                 key={service.id}
                 barbershop={barbershop}
-                service={service}
+                service={{
+                  ...service,
+                  price: Number(service.price)
+                }}
                 barberId={barber.id}
               />
             ))}

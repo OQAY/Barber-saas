@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button"
 import { useBooking } from "../../_contexts/booking-context"
-import { useState } from "react"
+import { useState, useMemo, useEffect } from "react"
 import {
   Sheet,
   SheetContent,
@@ -18,7 +18,6 @@ import { set, isPast, isToday } from "date-fns"
 import { createBooking } from "../../_actions/create-booking"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { useMemo, useEffect } from "react"
 import { getBookings } from "../../_actions/get-bookings"
 import { Booking } from "@prisma/client"
 import BookingSummary from "./booking-summary"
@@ -65,11 +64,6 @@ export function CartSummary() {
   const [selectedTime, setSelectedTime] = useState<string | undefined>(undefined)
   const [dayBookings, setDayBookings] = useState<Booking[]>([])
 
-  // Se não há serviços selecionados, não mostra o carrinho
-  if (getServiceCount() === 0) {
-    return null
-  }
-
   useEffect(() => {
     const fetch = async () => {
       if (!selectedDay || selectedServices.length === 0) return
@@ -93,6 +87,26 @@ export function CartSummary() {
       minutes: Number(selectedTime?.split(":")[1]),
     })
   }, [selectedDay, selectedTime])
+
+  const morningTimes = useMemo(() => {
+    if (!selectedDay) return []
+    return filterAvailableTimes(MORNING_TIMES, dayBookings, selectedDay)
+  }, [dayBookings, selectedDay])
+
+  const afternoonTimes = useMemo(() => {
+    if (!selectedDay) return []
+    return filterAvailableTimes(AFTERNOON_TIMES, dayBookings, selectedDay)
+  }, [dayBookings, selectedDay])
+
+  const eveningTimes = useMemo(() => {
+    if (!selectedDay) return []
+    return filterAvailableTimes(EVENING_TIMES, dayBookings, selectedDay)
+  }, [dayBookings, selectedDay])
+
+  // Se não há serviços selecionados, não mostra o carrinho
+  if (getServiceCount() === 0) {
+    return null
+  }
 
   const handleContinueClick = () => {
     if (!data?.user) {
@@ -144,21 +158,6 @@ export function CartSummary() {
       toast.error("Erro ao criar reservas!")
     }
   }
-
-  const morningTimes = useMemo(() => {
-    if (!selectedDay) return []
-    return filterAvailableTimes(MORNING_TIMES, dayBookings, selectedDay)
-  }, [dayBookings, selectedDay])
-
-  const afternoonTimes = useMemo(() => {
-    if (!selectedDay) return []
-    return filterAvailableTimes(AFTERNOON_TIMES, dayBookings, selectedDay)
-  }, [dayBookings, selectedDay])
-
-  const eveningTimes = useMemo(() => {
-    if (!selectedDay) return []
-    return filterAvailableTimes(EVENING_TIMES, dayBookings, selectedDay)
-  }, [dayBookings, selectedDay])
 
   return (
     <>
@@ -283,7 +282,7 @@ export function CartSummary() {
                       </Button>
                     ))
                   ) : (
-                    <p className="px-8 text-xs font-semibild">
+                    <p className="px-8 text-xs font-semibold">
                       Não há horários disponíveis à noite.
                     </p>
                   )}
