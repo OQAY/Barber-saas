@@ -25,13 +25,29 @@ async function seedDatabase() {
       "https://utfs.io/f/60f24f5c-9ed3-40ba-8c92-0cd1dcd043f9-16w.png",
     ]
 
+    // Lista completa de todos os serviços disponíveis
+    const allServices = [
+      "Corte de Cabelo",
+      "Barba",
+      "Corte e Barba",
+      "Sobrancelha",
+      "Bigode",
+      "Cavanhaque",
+      "Pézinho",
+      "Pigmentação de Cabelo/Barba",
+      "Hidratação",
+      "Limpeza de Pele",
+      "Luzes",
+      "Visagismo"
+    ]
+
     const barberData = [
       {
         name: "Lucas Silva",
         email: "lucas@barbeariapremiuem.com",
         phone: "(11) 99999-1111",
-        bio: "Especialista em cortes modernos e clássicos. 8 anos de experiência no ramo.",
-        specialties: ["Cabelo", "Barba", "Acabamento"],
+        bio: "Apaixonado por futebol e cortes modernos! Especialista em transformar ideias em visual. Adora conversar sobre os últimos jogos do Palmeiras enquanto cria o corte perfeito. Acredita que cada cliente merece sair daqui se sentindo mais confiante.",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "09:00", end: "18:00" },
           tuesday: { start: "09:00", end: "18:00" },
@@ -46,8 +62,8 @@ async function seedDatabase() {
         name: "Pedro Santos",
         email: "pedro@barbeariapremiuem.com",
         phone: "(11) 99999-2222",
-        bio: "Expert em barba e bigode. Técnicas tradicionais com navalha.",
-        specialties: ["Barba", "Sobrancelha", "Massagem"],
+        bio: "Mestre da navalha tradicional e amante de rock clássico! Coleciona vinis e tem as melhores histórias para contar. Especialista em barbas que impressionam, sempre com muito papo bom e trilha sonora dos anos 80.",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "10:00", end: "19:00" },
           tuesday: { start: "10:00", end: "19:00" },
@@ -62,8 +78,8 @@ async function seedDatabase() {
         name: "Maria Oliveira",
         email: "maria@barbeariapremiuem.com",
         phone: "(11) 99999-3333",
-        bio: "Especialista em cortes femininos e design de sobrancelhas.",
-        specialties: ["Cabelo", "Sobrancelha", "Hidratação"],
+        bio: "Artista do visagismo e apaixonada por café! Formada em design, adora criar looks únicos que realçam a personalidade. Sempre com um sorriso no rosto e dicas de beleza que realmente funcionam. Seu latte art é tão bom quanto seu trabalho!",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "09:00", end: "17:00" },
           tuesday: { start: "09:00", end: "17:00" },
@@ -78,8 +94,8 @@ async function seedDatabase() {
         name: "Carlos Mendes",
         email: "carlos@barbeariapremiuem.com",
         phone: "(11) 99999-4444",
-        bio: "Especialista em cortes infantis e barbas estilizadas.",
-        specialties: ["Cabelo", "Barba", "Massagem"],
+        bio: "Pai de dois filhos e especialista em conquistar a confiança das crianças! Adora desenho animado, tem paciência infinita e transforma cada corte infantil em diversão. Seu segredo? Sempre ter pirulitos e muitas piadas na manga.",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "08:00", end: "17:00" },
           tuesday: { start: "08:00", end: "17:00" },
@@ -94,8 +110,8 @@ async function seedDatabase() {
         name: "Ana Costa",
         email: "ana@barbeariapremiuem.com",
         phone: "(11) 99999-5555",
-        bio: "Master em coloração e tratamentos capilares avançados.",
-        specialties: ["Corte de Cabelo", "Hidratação", "Sobrancelha"],
+        bio: "Colorista inovadora e fanática por K-pop! Especialista em transformações radicais e cores únicas. Adora experimentar tendências asiáticas de beleza e sempre está por dentro das últimas novidades. Prepare-se para uma experiência colorida e divertida!",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "12:00", end: "20:00" },
           tuesday: { start: "12:00", end: "20:00" },
@@ -110,8 +126,8 @@ async function seedDatabase() {
         name: "Roberto Lima",
         email: "roberto@barbeariapremiuem.com",
         phone: "(11) 99999-6666",
-        bio: "Barbeiro tradicional com 15 anos de experiência.",
-        specialties: ["Cabelo", "Barba", "Acabamento"],
+        bio: "Veterano da profissão e contador de histórias incríveis! 15 anos cortando cabelo e uma biblioteca de experiências. Especialista em cortes clássicos, adora pescar aos domingos e tem sempre um conselho sábio para compartilhar.",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "07:00", end: "16:00" },
           tuesday: { start: "07:00", end: "16:00" },
@@ -126,8 +142,8 @@ async function seedDatabase() {
         name: "Fernanda Alves",
         email: "fernanda@barbeariapremiuem.com",
         phone: "(11) 99999-7777",
-        bio: "Especialista em design de sobrancelhas e estética facial.",
-        specialties: ["Sobrancelha", "Hidratação", "Massagem"],
+        bio: "Perfeccionista das sobrancelhas e viciada em séries! Especialista em harmonia facial, adora conversar sobre o último episódio que assistiu. Seus clientes saem com o visual perfeito e várias dicas de séries para maratonar!",
+        specialties: allServices, // Todos os serviços
         workingHours: {
           monday: { start: "13:00", end: "21:00" },
           tuesday: { start: "13:00", end: "21:00" },
@@ -144,7 +160,7 @@ async function seedDatabase() {
       {
         name: "Corte de Cabelo",
         description: "Estilo personalizado com as últimas tendências.",
-        price: 60.0,
+        price: 40.0,
         imageUrl:
           "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
       },
@@ -156,32 +172,74 @@ async function seedDatabase() {
           "https://utfs.io/f/e6bdffb6-24a9-455b-aba3-903c2c2b5bde-1jo6tu.png",
       },
       {
-        name: "Pézinho",
-        description: "Acabamento perfeito para um visual renovado.",
-        price: 35.0,
+        name: "Corte e Barba",
+        description: "Combo completo: corte moderno + barba modelada.",
+        price: 70.0,
         imageUrl:
-          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+          "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
       },
       {
         name: "Sobrancelha",
         description: "Expressão acentuada com modelagem precisa.",
-        price: 20.0,
+        price: 10.0,
         imageUrl:
           "https://utfs.io/f/2118f76e-89e4-43e6-87c9-8f157500c333-b0ps0b.png",
       },
       {
-        name: "Massagem",
-        description: "Relaxe com uma massagem revigorante.",
-        price: 50.0,
+        name: "Bigode",
+        description: "Modelagem e aparagem precisa do bigode.",
+        price: 10.0,
+        imageUrl:
+          "https://utfs.io/f/e6bdffb6-24a9-455b-aba3-903c2c2b5bde-1jo6tu.png",
+      },
+      {
+        name: "Cavanhaque",
+        description: "Estilo clássico com modelagem refinada.",
+        price: 15.0,
+        imageUrl:
+          "https://utfs.io/f/e6bdffb6-24a9-455b-aba3-903c2c2b5bde-1jo6tu.png",
+      },
+      {
+        name: "Pézinho",
+        description: "Acabamento perfeito para um visual renovado.",
+        price: 15.0,
+        imageUrl:
+          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+      {
+        name: "Pigmentação de Cabelo/Barba",
+        description: "Tingimento e correção de tons naturais.",
+        price: 15.0,
+        imageUrl:
+          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+      {
+        name: "Hidratação",
+        description: "Tratamento hidratante para cabelo e barba.",
+        price: 20.0,
+        imageUrl:
+          "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+      {
+        name: "Limpeza de Pele",
+        description: "Tratamento completo de limpeza e revitalização facial.",
+        price: 99.9,
         imageUrl:
           "https://utfs.io/f/c4919193-a675-4c47-9f21-ebd86d1c8e6a-4oen2a.png",
       },
       {
-        name: "Hidratação",
-        description: "Hidratação profunda para cabelo e barba.",
-        price: 25.0,
+        name: "Luzes",
+        description: "Mechas e reflexos profissionais (valor a partir de).",
+        price: 100.0,
         imageUrl:
           "https://utfs.io/f/8a457cda-f768-411d-a737-cdb23ca6b9b5-b3pegf.png",
+      },
+      {
+        name: "Visagismo",
+        description: "Análise facial personalizada para o corte perfeito.",
+        price: 120.0,
+        imageUrl:
+          "https://utfs.io/f/0ddfbd26-a424-43a0-aaf3-c3f1dc6be6d1-1kgxo7.png",
       },
     ]
 

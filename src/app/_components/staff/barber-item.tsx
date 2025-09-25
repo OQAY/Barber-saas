@@ -24,42 +24,42 @@ function createSlug(name: string): string {
 const BarberItem = ({ barber }: BarberItemProps) => {
   // Usa o slug se existir, senão gera um baseado no nome
   const barberSlug = barber.slug || createSlug(barber.name)
-  
+
   return (
-    <Card className="min-w-[110px] rounded-2xl">
-      <CardContent className="p-0 px-1 pt-1">
-        {/* IMAGEM - 60% */}
-        <div className="relative h-[100px] w-full">
-          <Image
-            fill
-            alt={barber.name}
-            className="rounded-2xl object-cover"
-            src={barber.photo || "/default-barber.png"}
-          />
+    <Card className="min-w-[110px] rounded-2xl cursor-pointer">
+      <Link href={`/barbers/${barberSlug}`}>
+        <CardContent className="p-0 px-1 pt-1">
+          {/* IMAGEM - 60% */}
+          <div className="relative h-[100px] w-full">
+            <Image
+              fill
+              alt={barber.name}
+              className="rounded-2xl object-cover"
+              src={barber.photo || "/default-barber.png"}
+            />
 
-          <Badge
-            className="absolute left-2 top-2 space-x-1"
-            variant="secondary"
-          >
-            <StarIcon size={12} className="fill-primary text-primary" />
-            <p className="text-xs font-semibold">5,0</p>
-          </Badge>
-        </div>
+            <Badge
+              className="absolute left-2 top-2 space-x-1"
+              variant="secondary"
+            >
+              <StarIcon size={12} className="fill-primary text-primary" />
+              <p className="text-xs font-semibold">5,0</p>
+            </Badge>
+          </div>
 
-        {/* NOME - 20% */}
-        <div className="px-1 py-2">
-          <h3 className="truncate text-sm font-semibold">{barber.name}</h3>
-        </div>
+          {/* NOME - 20% */}
+          <div className="px-1 py-2">
+            <h3 className="truncate text-sm font-semibold">{barber.name}</h3>
+          </div>
 
-        {/* BOTÃO - 20% */}
-        <div className="px-1 pb-2">
-          <Button variant="secondary" className="h-8 w-full text-xs" asChild>
-            <Link href={`/barbers/${barberSlug}`}>
+          {/* BOTÃO - 20% */}
+          <div className="px-1 pb-2">
+            <Button variant="secondary" className="h-8 w-full text-xs pointer-events-none">
               Reservar
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
+            </Button>
+          </div>
+        </CardContent>
+      </Link>
     </Card>
   )
 }

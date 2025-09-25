@@ -82,7 +82,7 @@ src/app/
 │   ├── layout/       # header, footer, sidebar-sheet, hero-section
 │   ├── home/         # about-section
 │   ├── barbershop/   # barbershop-item
-│   ├── booking/      # booking-item, booking-summary  
+│   ├── booking/      # booking-item, booking-summary
 │   ├── staff/        # barber-item, barber-specialties
 │   ├── auth/         # sign-in-dialog
 │   └── common/       # search, service-items, phone-item, quick-search
