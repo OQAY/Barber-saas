@@ -12,6 +12,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/app/_components/ui/avatar
 import { Badge } from "@/app/_components/ui/badge"
 import { notFound } from "next/navigation"
 import BarberSpecialties from "@/app/_components/staff/barber-specialties"
+import { BookingProvider } from "@/app/_contexts/booking-context"
+import { CartSummary } from "@/app/_components/booking/cart-summary"
 
 interface BarberPageProps {
   params: {
@@ -118,7 +120,8 @@ const BarberPage = async ({ params }: BarberPageProps) => {
   }
 
   return (
-    <div className="min-h-screen">
+    <BookingProvider>
+      <div className="min-h-screen pb-20">{/* Padding bottom para não sobrepor o rodapé fixo */}
       {/* Header com imagem de fundo */}
       <div className="relative h-[250px] w-full">
         <Image
@@ -281,7 +284,11 @@ const BarberPage = async ({ params }: BarberPageProps) => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Rodapé fixo com resumo do carrinho */}
+      <CartSummary />
     </div>
+    </BookingProvider>
   )
 }
 

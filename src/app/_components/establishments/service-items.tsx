@@ -14,7 +14,7 @@ import {
 import { Calendar } from "../ui/calendar"
 import { ptBR } from "date-fns/locale"
 import { useEffect, useMemo, useState } from "react"
-import { Sun, CloudSun, Moon } from "lucide-react"
+import { Sun, CloudSun, Moon, Plus, Check } from "lucide-react"
 import { set, isPast, isToday } from "date-fns"
 import { useSession } from "next-auth/react"
 import { toast } from "sonner"
@@ -22,6 +22,7 @@ import { createBooking } from "../../_actions/create-booking"
 import { getBookings } from "../../_actions/get-bookings"
 import BookingSummary from "../booking/booking-summary"
 import { useRouter } from "next/navigation"
+import { useBooking } from "../../_contexts/booking-context"
 
 interface ServiceItemProps {
   service: BarbershopService
@@ -58,12 +59,22 @@ const filterAvailableTimes = (
 const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
   const { data } = useSession()
   const router = useRouter()
+  const {
+    addService,
+    removeService,
+    isServiceSelected,
+    getServiceCount
+  } = useBooking()
+
   const [selectedDay, setSelectedDay] = useState<Date | undefined>(new Date())
   const [selectedTime, setSelectedTime] = useState<string | undefined>(
     undefined,
   )
   const [dayBookings, setDayBookings] = useState<Booking[]>([])
   const [bookingSheetIsOpen, setBookingSheetIsOpen] = useState(false)
+
+  const isSelected = isServiceSelected(service.id)
+  const isFirstService = getServiceCount() === 0
 
   useEffect(() => {
     const fetch = async () => {
@@ -85,6 +96,28 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
       minutes: Number(selectedTime?.split(":")[1]),
     })
   }, [selectedDay, selectedTime])
+
+  const handleServiceToggle = () => {
+    if (!data?.user) {
+      // Redireciona para página de login com URL de retorno
+      const currentPath = window.location.pathname
+      router.push(`/login?returnUrl=${encodeURIComponent(currentPath)}`)
+      return
+    }
+
+    if (!barberId) return
+
+    if (isSelected) {
+      removeService(service.id)
+    } else {
+      // Converte Decimal para number para o contexto
+      const serviceWithNumberPrice = {
+        ...service,
+        price: Number(service.price)
+      }
+      addService(serviceWithNumberPrice, barberId)
+    }
+  }
 
   const handleBookingClick = () => {
     if (data?.user) {
@@ -172,17 +205,26 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
                 }).format(Number(service.price))}
               </p>
 
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={isSelected ? "default" : "secondary"}
+                  size="sm"
+                  onClick={handleServiceToggle}
+                  className="flex items-center gap-1"
+                >
+                  {isSelected ? (
+                    <Check size={14} />
+                  ) : (
+                    <Plus size={14} />
+                  )}
+                  {isFirstService && !isSelected ? "Reservar" : isSelected ? "" : "Adicionar"}
+                </Button>
+              </div>
+
               <Sheet
                 open={bookingSheetIsOpen}
                 onOpenChange={handleBookingSheetOpenChange}
               >
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={handleBookingClick}
-                >
-                  Reservar
-                </Button>
 
                 <SheetContent className="max-h-[100vh] overflow-y-auto px-0">
                   <SheetHeader>
