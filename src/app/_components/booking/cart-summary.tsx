@@ -16,6 +16,7 @@ import { useSession } from "next-auth/react"
 import { Sun, CloudSun, Moon } from "lucide-react"
 import { set, isPast, isToday } from "date-fns"
 import { createBooking } from "../../_actions/create-booking"
+import { createCombinedBooking } from "../../_actions/create-combined-booking"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import { getBookings } from "../../_actions/get-bookings"
@@ -136,26 +137,43 @@ export function CartSummary() {
     try {
       if (!selectedDate) return
 
-      // Criar um booking para cada serviço selecionado
-      for (const selectedService of selectedServices) {
+      // Se há múltiplos serviços, criar um único card combinado
+      if (selectedServices.length > 1) {
+        const result = await createCombinedBooking({
+          selectedServices,
+          startDate: selectedDate,
+        })
+
+        handleBookingSheetOpenChange()
+        clearServices()
+        toast.success(result.message, {
+          action: {
+            label: "Ver agendamentos",
+            onClick: () => router.push("/bookings"),
+          },
+        })
+      } else {
+        // Se há apenas um serviço, usar lógica original
+        const selectedService = selectedServices[0]
         await createBooking({
           serviceId: selectedService.service.id,
           barberId: selectedService.barberId,
           date: selectedDate,
         })
-      }
 
-      handleBookingSheetOpenChange()
-      clearServices() // Limpa o carrinho após sucesso
-      toast.success(`${getServiceCount()} reserva(s) criada(s) com sucesso!`, {
-        action: {
-          label: "Ver agendamentos",
-          onClick: () => router.push("/bookings"),
-        },
-      })
+        handleBookingSheetOpenChange()
+        clearServices()
+        toast.success("Agendamento criado com sucesso!", {
+          action: {
+            label: "Ver agendamentos",
+            onClick: () => router.push("/bookings"),
+          },
+        })
+      }
     } catch (error) {
       console.error(error)
-      toast.error("Erro ao criar reservas!")
+      const errorMessage = error instanceof Error ? error.message : "Erro ao criar reservas!"
+      toast.error(errorMessage)
     }
   }
 

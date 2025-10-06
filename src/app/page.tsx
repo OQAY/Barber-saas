@@ -7,7 +7,7 @@ import { db } from "./_lib/prisma"
 import BarberItem from "./_components/staff/barber-item"
 import BookingItem from "./_components/booking/booking-item"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../app/_lib/Auth"
+import { authOptions } from "../app/_lib/auth"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 

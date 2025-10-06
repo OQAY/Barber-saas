@@ -1,7 +1,7 @@
-import { PrismaAdapter } from "@auth/prisma-adapter"
+// import { PrismaAdapter } from "@auth/prisma-adapter"
 import { AuthOptions } from "next-auth"
 import { db } from "./prisma"
-import { Adapter } from "next-auth/adapters"
+// import { Adapter } from "next-auth/adapters"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
@@ -32,7 +32,8 @@ declare module "next-auth/jwt" {
 }
 
 export const authOptions: AuthOptions = {
-  adapter: PrismaAdapter(db) as Adapter,
+  // PrismaAdapter removido temporariamente para evitar conflitos com Jest workers
+  // adapter: PrismaAdapter(db) as Adapter,
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,

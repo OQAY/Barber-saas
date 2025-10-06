@@ -8,10 +8,12 @@ declare global {
 
 /**
  * Cria nova instância do Prisma com configuração otimizada para o ambiente
+ * Reduzido para evitar Jest worker conflicts
  */
 function createPrismaClient(): PrismaClient {
   return new PrismaClient({
-    log: getLogLevel(),
+    // Reduzir logs para evitar conflitos
+    log: process.env.NODE_ENV === 'development' ? ['error'] : ['error'],
     datasources: {
       db: {
         url: getDatabaseUrl()

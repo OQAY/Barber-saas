@@ -2,7 +2,7 @@
 
 import { db } from "@/app/_lib/prisma"
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/_lib/Auth"
+import { authOptions } from "@/app/_lib/auth"
 
 interface CreateQuickBookingParams {
   barberId: string

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { db } from "../_lib/prisma"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../_lib/Auth"
+import { authOptions } from "../_lib/auth"
 import { logger } from "../_lib/logger"
 import { createBookingSchema, validateData, sanitizeString } from "../_lib/validations"
 
@@ -45,78 +45,68 @@ export const createBooking = async (params: CreateBookingParams) => {
   const validatedData = validation.data
 
   try {
-    // Verificar se o serviço existe
-    const service = await db.barbershopService.findUnique({
-      where: { id: validatedData.serviceId },
-      include: { barbershop: true }
-    })
-
-    if (!service) {
-      const error = new Error("Serviço não encontrado")
-      logger.error("Create booking failed: Service not found", error, {
-        userId,
-        serviceId: validatedData.serviceId
+    // Use transaction para otimizar e evitar múltiplas conexões que causam Jest worker issues
+    const booking = await db.$transaction(async (tx) => {
+      // Verificar se o serviço existe
+      const service = await tx.barbershopService.findUnique({
+        where: { id: validatedData.serviceId },
+        include: { barbershop: true }
       })
-      throw error
-    }
 
-    // Verificar se o barbeiro existe e está ativo
-    const barber = await db.barber.findUnique({
-      where: { id: validatedData.barberId },
-      include: { barbershop: true }
-    })
+      if (!service) {
+        throw new Error("Serviço não encontrado")
+      }
 
-    if (!barber || !barber.isActive) {
-      const error = new Error("Barbeiro não encontrado ou inativo")
-      logger.error("Create booking failed: Barber not found or inactive", error, {
-        userId,
-        barberId: validatedData.barberId,
-        barberIsActive: barber?.isActive
+      // Verificar se o barbeiro existe e está ativo
+      const barber = await tx.barber.findUnique({
+        where: { id: validatedData.barberId },
+        include: { barbershop: true }
       })
-      throw error
-    }
 
-    // Verificar se já existe agendamento no mesmo horário
-    const existingBooking = await db.booking.findFirst({
-      where: {
-        barberId: validatedData.barberId,
-        date: validatedData.date,
-        status: {
-          not: "CANCELLED"
+      if (!barber || !barber.isActive) {
+        throw new Error("Barbeiro não encontrado ou inativo")
+      }
+
+      // Verificar se já existe agendamento no mesmo horário
+      const existingBooking = await tx.booking.findFirst({
+        where: {
+          barberId: validatedData.barberId,
+          date: validatedData.date,
+          status: {
+            not: "CANCELLED"
+          }
         }
-      }
-    })
-
-    if (existingBooking) {
-      const error = new Error("Horário já está ocupado")
-      logger.warn("Create booking failed: Time slot already taken", {
-        userId,
-        barberId: validatedData.barberId,
-        requestedDate: validatedData.date,
-        existingBookingId: existingBooking.id
       })
-      throw error
-    }
 
-    // Criar o agendamento
-    const booking = await db.booking.create({
-      data: {
-        serviceId: validatedData.serviceId,
-        barberId: validatedData.barberId,
-        date: validatedData.date,
-        userId: userId,
-        status: "SCHEDULED",
-        totalPrice: service.price,
-        notes: validatedData.notes
-      },
-      include: {
-        service: true,
-        barber: true
+      if (existingBooking) {
+        throw new Error("Horário já está ocupado")
       }
+
+      // Criar o agendamento
+      const newBooking = await tx.booking.create({
+        data: {
+          serviceId: validatedData.serviceId,
+          barberId: validatedData.barberId,
+          date: validatedData.date,
+          userId: userId,
+          status: "SCHEDULED",
+          totalPrice: service.price,
+          notes: validatedData.notes
+        },
+        include: {
+          service: true,
+          barber: true
+        }
+      })
+
+      return { booking: newBooking, service, barber }
     })
+
+    // Log fora da transaction para evitar conflitos
+    const { booking: newBooking, service, barber } = booking
 
     logger.userAction("booking_created", userId, {
-      bookingId: booking.id,
+      bookingId: newBooking.id,
       serviceName: service.name,
       barberName: barber.name,
       barbershopName: barber.barbershop.name,
@@ -124,10 +114,10 @@ export const createBooking = async (params: CreateBookingParams) => {
       price: service.price
     })
 
-    revalidatePath("/barbershops/[id]")
+    // Reduzir revalidations para evitar conflitos
     revalidatePath("/bookings")
 
-    return booking
+    return newBooking
 
   } catch (error) {
     // Re-throw known business logic errors

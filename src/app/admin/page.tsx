@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/_lib/Auth"
+import { authOptions } from "@/app/_lib/auth"
 import { db } from "@/app/_lib/prisma"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/app/_components/ui/card"
 import { 

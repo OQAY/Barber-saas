@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { db } from "../_lib/prisma"
 import { logger } from "../_lib/logger"
 import { getServerSession } from "next-auth"
-import { authOptions } from "../_lib/Auth"
+import { authOptions } from "../_lib/auth"
 
 export const cancelBooking = async (bookingId: string) => {
   const session = await getServerSession(authOptions)

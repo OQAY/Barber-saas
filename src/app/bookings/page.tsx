@@ -3,7 +3,7 @@ import Header from "../_components/layout/header"
 import { redirect } from "next/navigation"
 import { db } from "../_lib/prisma"
 import BookingItem from "../_components/booking/booking-item"
-import { authOptions } from "../_lib/Auth"
+import { authOptions } from "../_lib/auth"
 
 const BookingsPage = async () => {
   const session = await getServerSession(authOptions)

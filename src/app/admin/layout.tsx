@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth"
-import { authOptions } from "@/app/_lib/Auth"
+import { authOptions } from "@/app/_lib/auth"
 import { redirect } from "next/navigation"
 import AdminHeader from "./_components/admin-header"
 import AdminSidebar from "./_components/admin-sidebar"
