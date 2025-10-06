@@ -10,7 +10,6 @@ import { Users, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "luci
 import Header from "../_components/layout/header"
 import NextClients from "../_components/dashboard/next-clients"
 import AgendaGrid from "../_components/dashboard/agenda-grid"
-import TestBookings from "../_components/dashboard/test-bookings"
 import QuickBookingModal from "../_components/dashboard/quick-booking-modal"
 import { useSession } from "next-auth/react"
 import { redirect } from "next/navigation"
@@ -284,7 +283,6 @@ function DashboardContent({
           {/* Mobile: Cards depois / Desktop: Coluna 1 */}
           <div className="space-y-4 lg:col-span-1 lg:order-1">
             <NextClients bookings={upcomingBookings} />
-            <TestBookings barbers={barbers} />
           </div>
         </div>
       </div>

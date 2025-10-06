@@ -165,19 +165,14 @@ export default function AgendaGridV4({ barbers }: AgendaGridProps) {
     scrollContainerRef.current.scrollLeft = scrollLeft + distance
   }
 
-  // Prevent vertical scroll inside agenda
+  // Handle horizontal scroll with mouse wheel
   const handleWheel = (e: React.WheelEvent) => {
     if (!scrollContainerRef.current) return
 
-    // Only allow horizontal scroll (deltaX) and block vertical scroll (deltaY)
+    // Only handle horizontal scroll (deltaX)
     if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-      // Horizontal scroll - allow it
       scrollContainerRef.current.scrollLeft += e.deltaX
     }
-
-    // Always prevent the default behavior to stop page scroll
-    e.preventDefault()
-    e.stopPropagation()
   }
 
   useEffect(() => {
