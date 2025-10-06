@@ -3,7 +3,6 @@
 import { db } from "@/app/_lib/prisma"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/app/_lib/Auth"
-import { revalidatePath } from "next/cache"
 
 export async function deleteBooking(bookingId: string) {
   try {
@@ -41,9 +40,6 @@ export async function deleteBooking(bookingId: string) {
     await db.booking.delete({
       where: { id: bookingId }
     })
-
-    // Revalidate the dashboard to refresh the data
-    revalidatePath("/dashboard")
 
     return { success: true, message: "Agendamento removido da lista com sucesso" }
   } catch (error) {

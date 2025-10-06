@@ -1,7 +1,6 @@
 "use server"
 
 import { db } from "@/app/_lib/prisma"
-import { revalidatePath } from "next/cache"
 import { BookingStatus } from "@prisma/client"
 
 export async function updateBookingStatus(
@@ -18,8 +17,6 @@ export async function updateBookingStatus(
       },
     })
 
-    revalidatePath("/dashboard")
-    
     return { success: true, booking: updatedBooking }
   } catch (error) {
     console.error("Error updating booking status:", error)
@@ -44,8 +41,6 @@ export async function updateMultipleBookingsStatus(
       },
     })
 
-    revalidatePath("/dashboard")
-    
     return { success: true, count: updatedBookings.count }
   } catch (error) {
     console.error("Error updating multiple bookings:", error)
@@ -57,7 +52,7 @@ export async function updateMultipleBookingsStatus(
 export async function updateExpiredBookings() {
   try {
     const now = new Date()
-    
+
     // Atualiza agendamentos que já passaram do horário e ainda estão como SCHEDULED
     const expiredBookings = await db.booking.updateMany({
       where: {
@@ -85,8 +80,6 @@ export async function updateExpiredBookings() {
       },
     })
 
-    revalidatePath("/dashboard")
-    
     return {
       success: true,
       expired: expiredBookings.count,

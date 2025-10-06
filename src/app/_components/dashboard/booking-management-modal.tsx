@@ -9,16 +9,6 @@ import {
 } from "@/app/_components/ui/dialog"
 import { Button } from "@/app/_components/ui/button"
 import { Badge } from "@/app/_components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/_components/ui/tabs"
-import { Calendar } from "@/app/_components/ui/calendar"
-import { Label } from "@/app/_components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/app/_components/ui/select"
 import {
   PlayCircle,
   CheckCircle2,
@@ -40,6 +30,8 @@ import { updateBookingStatus } from "@/app/_actions/update-booking-status"
 import { deleteBooking } from "@/app/_actions/delete-booking"
 import { toast } from "sonner"
 import { cn } from "@/app/_lib/utils"
+import { useDashboard } from "@/app/_contexts/dashboard-context"
+import RescheduleBookingSheet from "./reschedule-booking-sheet"
 
 interface Booking {
   id: string
@@ -74,58 +66,53 @@ export default function BookingManagementModal({
   onClose,
   barbers = [],
 }: BookingManagementModalProps) {
+  const { updateBookingStatusOptimistic, revertBookingStatus, deleteBookingOptimistic, revertBookingDeletion } = useDashboard()
   const [isLoading, setIsLoading] = useState(false)
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>()
-  const [selectedTime, setSelectedTime] = useState<string>("")
-  const [selectedBarber, setSelectedBarber] = useState<string>("")
+  const [rescheduleSheetOpen, setRescheduleSheetOpen] = useState(false)
 
   if (!booking) return null
 
-  const handleStatusUpdate = async (status: "IN_PROGRESS" | "COMPLETED" | "CANCELLED") => {
-    setIsLoading(true)
-
+  const handleStatusUpdate = async (status: "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED") => {
+    const oldStatus = booking.status // Guardar estado antigo para possível rollback
     const statusMessages = {
+      SCHEDULED: "Agendado",
       IN_PROGRESS: "Em Atendimento",
       COMPLETED: "Concluído",
       CANCELLED: "Cancelado",
     }
 
+    setIsLoading(true)
+
+    // 1. ATUALIZA UI IMEDIATAMENTE (Optimistic Update)
+    updateBookingStatusOptimistic(booking.id, status)
+
+    // 2. Fecha modal instantaneamente para melhor UX
+    onClose()
+
+    // 3. Mostra toast de loading
+    const toastId = toast.loading(`Atualizando para ${statusMessages[status]}...`)
+
     try {
+      // 4. CHAMA API NO BACKGROUND
       const result = await updateBookingStatus(booking.id, status)
 
       if (result.success) {
-        toast.success(`Agendamento marcado como ${statusMessages[status]}`)
-        setTimeout(onClose, 500) // Fecha modal após sucesso
+        // 5. SUCESSO: UI já foi atualizada, apenas confirma
+        toast.success(`Agendamento marcado como ${statusMessages[status]}`, { id: toastId })
       } else {
-        toast.error("Erro ao atualizar status")
+        // 6. ERRO: REVERTE mudança visual
+        revertBookingStatus(booking.id, oldStatus as any)
+        toast.error("Erro ao atualizar status", { id: toastId })
       }
     } catch (error) {
-      toast.error("Erro ao atualizar status")
+      // 7. ERRO: REVERTE mudança visual
+      revertBookingStatus(booking.id, oldStatus as any)
+      toast.error("Erro ao atualizar status", { id: toastId })
     } finally {
       setIsLoading(false)
     }
   }
 
-  const handleReschedule = async () => {
-    if (!selectedDate || !selectedTime) {
-      toast.error("Selecione uma nova data e horário")
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      // Aqui você implementaria a lógica de reagendamento
-      // Verificar disponibilidade
-      // Atualizar no banco
-      toast.success("Agendamento remarcado com sucesso!")
-      setTimeout(onClose, 500)
-    } catch (error) {
-      toast.error("Erro ao remarcar agendamento")
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleDeleteBooking = async () => {
     if (!confirm("Tem certeza que deseja retirar este agendamento da lista? Esta ação não pode ser desfeita.")) {
@@ -134,19 +121,36 @@ export default function BookingManagementModal({
 
     setIsLoading(true)
 
+    // 1. REMOVE DA UI IMEDIATAMENTE (Optimistic Update)
+    const bookingBackup = deleteBookingOptimistic(booking.id)
+
+    // 2. Fecha modal instantaneamente
+    onClose()
+
+    // 3. Mostra toast de loading
+    const toastId = toast.loading("Removendo agendamento...")
+
     try {
+      // 4. CHAMA API NO BACKGROUND
       const result = await deleteBooking(booking.id)
 
       if (result.success) {
-        toast.success("Agendamento removido da lista com sucesso!")
-        setTimeout(onClose, 500) // Fecha modal após sucesso
-        // Força atualização da página para refletir a mudança
-        window.location.reload()
+        // 5. SUCESSO: UI já foi atualizada, apenas confirma
+        toast.success("Agendamento removido da lista!", { id: toastId })
+        // NÃO precisa mais de window.location.reload() ✅
       } else {
-        toast.error(result.error || "Erro ao remover agendamento")
+        // 6. ERRO: REVERTE deleção
+        if (bookingBackup) {
+          revertBookingDeletion(bookingBackup)
+        }
+        toast.error(result.error || "Erro ao remover", { id: toastId })
       }
     } catch (error) {
-      toast.error("Erro ao remover agendamento")
+      // 7. ERRO: REVERTE deleção
+      if (bookingBackup) {
+        revertBookingDeletion(bookingBackup)
+      }
+      toast.error("Erro ao remover agendamento", { id: toastId })
     } finally {
       setIsLoading(false)
     }
@@ -169,15 +173,6 @@ export default function BookingManagementModal({
         {config.label}
       </Badge>
     )
-  }
-
-  // Gerar horários disponíveis
-  const timeSlots = []
-  for (let hour = 8; hour <= 20; hour++) {
-    timeSlots.push(`${hour.toString().padStart(2, "0")}:00`)
-    if (hour < 20) {
-      timeSlots.push(`${hour.toString().padStart(2, "0")}:30`)
-    }
   }
 
   return (
@@ -257,21 +252,38 @@ export default function BookingManagementModal({
             </div>
           </div>
 
-          {/* Tabs de Ações */}
-          <Tabs defaultValue="status" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="status">Alterar Status</TabsTrigger>
-              <TabsTrigger value="reschedule">Reagendar</TabsTrigger>
-            </TabsList>
+          {/* Ações do Agendamento */}
+          <div className="space-y-4">
+            {/* Botão Reagendar */}
+            <Button
+              variant="outline"
+              className="w-full justify-start gap-2"
+              onClick={() => setRescheduleSheetOpen(true)}
+              disabled={isLoading || booking.status === "CANCELLED"}
+            >
+              <RefreshCw className="h-4 w-4" />
+              Reagendar Atendimento
+            </Button>
 
-            {/* Tab de Status */}
-            <TabsContent value="status" className="space-y-4">
+            {/* Alterar Status */}
+            <div className="space-y-4">
+              <div className="border-t pt-4"></div>
               <div className="text-sm text-muted-foreground flex items-center gap-2">
                 <AlertCircle className="h-4 w-4" />
                 Selecione o novo status para este agendamento
               </div>
 
               <div className="grid grid-cols-2 gap-3">
+                <Button
+                  variant="outline"
+                  className="justify-start gap-2"
+                  onClick={() => handleStatusUpdate("SCHEDULED")}
+                  disabled={isLoading || booking.status === "SCHEDULED"}
+                >
+                  <Clock className="h-4 w-4 text-gray-600" />
+                  Agendado
+                </Button>
+
                 <Button
                   variant="outline"
                   className="justify-start gap-2"
@@ -304,7 +316,7 @@ export default function BookingManagementModal({
 
                 <Button
                   variant="outline"
-                  className="justify-start gap-2"
+                  className="justify-start gap-2 col-span-2"
                   onClick={() => handleStatusUpdate("CANCELLED")}
                   disabled={isLoading || booking.status === "CANCELLED"}
                 >
@@ -331,81 +343,18 @@ export default function BookingManagementModal({
                   </Button>
                 </div>
               )}
-            </TabsContent>
-
-            {/* Tab de Reagendamento */}
-            <TabsContent value="reschedule" className="space-y-4">
-              <div className="text-sm text-muted-foreground flex items-center gap-2">
-                <RefreshCw className="h-4 w-4" />
-                Escolha uma nova data e horário disponível
-              </div>
-
-              <div className="grid gap-4">
-                {/* Seleção de Data */}
-                <div className="space-y-2">
-                  <Label>Nova Data</Label>
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    locale={ptBR}
-                    disabled={(date) =>
-                      date < new Date() || date.getDay() === 0
-                    }
-                    className="rounded-md border"
-                  />
-                </div>
-
-                {/* Seleção de Horário */}
-                <div className="space-y-2">
-                  <Label>Novo Horário</Label>
-                  <Select value={selectedTime} onValueChange={setSelectedTime}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Escolha um horário" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {timeSlots.map((time) => (
-                        <SelectItem key={time} value={time}>
-                          {time}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Seleção de Barbeiro */}
-                <div className="space-y-2">
-                  <Label>Barbeiro (opcional)</Label>
-                  <Select
-                    value={selectedBarber || booking.barber.id}
-                    onValueChange={setSelectedBarber}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Manter o mesmo barbeiro" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {barbers.map((barber) => (
-                        <SelectItem key={barber.id} value={barber.id}>
-                          {barber.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <Button
-                  onClick={handleReschedule}
-                  disabled={isLoading || !selectedDate || !selectedTime}
-                  className="w-full"
-                >
-                  <RefreshCw className="mr-2 h-4 w-4" />
-                  Confirmar Reagendamento
-                </Button>
-              </div>
-            </TabsContent>
-          </Tabs>
+            </div>
+          </div>
         </div>
       </DialogContent>
+
+      {/* Sheet de Reagendamento */}
+      <RescheduleBookingSheet
+        isOpen={rescheduleSheetOpen}
+        onClose={() => setRescheduleSheetOpen(false)}
+        booking={booking}
+        barbers={barbers}
+      />
     </Dialog>
   )
 }

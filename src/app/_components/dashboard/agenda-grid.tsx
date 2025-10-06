@@ -5,6 +5,7 @@ import { format } from "date-fns"
 import { cn } from "@/app/_lib/utils"
 import { useRef, useState, useEffect } from "react"
 import BookingManagementModal from "./booking-management-modal"
+import { useDashboard } from "@/app/_contexts/dashboard-context"
 
 interface Booking {
   id: string
@@ -34,11 +35,12 @@ interface Barber {
 }
 
 interface AgendaGridProps {
-  bookings: Booking[]
   barbers: Barber[]
 }
 
-export default function AgendaGridV4({ bookings, barbers }: AgendaGridProps) {
+export default function AgendaGridV4({ barbers }: AgendaGridProps) {
+  // Pega bookings do Context em vez de props
+  const { bookings } = useDashboard()
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
