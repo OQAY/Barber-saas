@@ -114,7 +114,7 @@ const ServiceItem = ({ service, barbershop, barberId }: ServiceItemProps) => {
       const serviceWithNumberPrice = {
         ...service,
         price: Number(service.price)
-      }
+      } as BarbershopService & { price: number }
       addService(serviceWithNumberPrice, barberId)
     }
   }
