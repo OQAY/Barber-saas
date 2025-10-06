@@ -7,6 +7,7 @@ import Header from "../_components/layout/header"
 import NextClients from "../_components/dashboard/next-clients"
 import QuickActions from "../_components/dashboard/quick-actions"
 import AgendaGrid from "../_components/dashboard/agenda-grid"
+import { DashboardProvider } from "../_contexts/dashboard-context"
 
 export default async function DashboardOperacional() {
   const now = new Date()
@@ -68,10 +69,19 @@ export default async function DashboardOperacional() {
     booking => booking.date >= new Date() && booking.date <= nextTwoHours
   )
 
+  // Calcular estatísticas
+  const stats = {
+    total: formattedBookings.length,
+    scheduled: formattedBookings.filter(b => b.status === "SCHEDULED").length,
+    inProgress: formattedBookings.filter(b => b.status === "IN_PROGRESS").length,
+    completed: formattedBookings.filter(b => b.status === "COMPLETED").length,
+    cancelled: formattedBookings.filter(b => b.status === "CANCELLED").length,
+  }
+
   return (
-    <>
+    <DashboardProvider initialBookings={formattedBookings} initialStats={stats}>
       <Header />
-      
+
       <div className="p-5 space-y-6">
         {/* Header do Dashboard */}
         <div className="flex items-center justify-between">
@@ -81,7 +91,7 @@ export default async function DashboardOperacional() {
               {format(new Date(), "EEEE, dd 'de' MMMM", { locale: ptBR })}
             </p>
           </div>
-          
+
           <Button size="lg" className="gap-2">
             <Users className="h-4 w-4" />
             Novo Encaixe
@@ -97,10 +107,10 @@ export default async function DashboardOperacional() {
 
           {/* Coluna 2-3: Grid de Agenda */}
           <div className="lg:col-span-2">
-            <AgendaGrid bookings={formattedBookings} barbers={barbers} />
+            <AgendaGrid barbers={barbers} />
           </div>
         </div>
       </div>
-    </>
+    </DashboardProvider>
   )
 }
