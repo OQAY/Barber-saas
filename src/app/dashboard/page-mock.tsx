@@ -51,7 +51,7 @@ export default async function DashboardOperacional() {
     },
     service: {
       name: booking.service.name,
-      price: Number(booking.service.price), // Converter Decimal para number
+      price: Number(booking.service.price) as number, // Converter Decimal para number
       duration: 60 // Duração padrão
     },
     barber: {

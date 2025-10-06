@@ -34,10 +34,20 @@ function createSlug(name: string): string {
 
 export async function generateMetadata({ params }: BarberPageProps) {
   // Primeiro tenta buscar por slug
-  let barber = await db.barber.findUnique({
-    where: { slug: params.slug },
-    select: { name: true, photo: true }
-  })
+  let barber = null
+
+  try {
+    barber = await db.barber.findUnique({
+      where: { slug: params.slug },
+      select: { name: true, photo: true }
+    })
+  } catch (error) {
+    console.error("Erro ao gerar metadata:", error)
+    return {
+      title: 'Barbeiro',
+      openGraph: { images: [] },
+    }
+  }
   
   // Se não encontrar, tenta buscar por ID (compatibilidade temporária)
   if (!barber && params.slug.includes('-')) {
@@ -66,21 +76,11 @@ export async function generateMetadata({ params }: BarberPageProps) {
 
 const BarberPage = async ({ params }: BarberPageProps) => {
   // Primeiro tenta buscar por slug
-  let barber = await db.barber.findUnique({
-    where: { slug: params.slug },
-    include: {
-      barbershop: {
-        include: {
-          services: true,
-        },
-      },
-    },
-  })
-  
-  // Se não encontrar, tenta buscar por ID (compatibilidade temporária)
-  if (!barber && params.slug.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+  let barber = null
+
+  try {
     barber = await db.barber.findUnique({
-      where: { id: params.slug },
+      where: { slug: params.slug },
       include: {
         barbershop: {
           include: {
@@ -89,21 +89,46 @@ const BarberPage = async ({ params }: BarberPageProps) => {
         },
       },
     })
+  } catch (error) {
+    console.error("Erro ao buscar barbeiro:", error)
+    notFound()
+  }
+  
+  // Se não encontrar, tenta buscar por ID (compatibilidade temporária)
+  if (!barber && params.slug.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+    try {
+      barber = await db.barber.findUnique({
+        where: { id: params.slug },
+        include: {
+          barbershop: {
+            include: {
+              services: true,
+            },
+          },
+        },
+      })
+    } catch (error) {
+      console.error("Erro ao buscar barbeiro por ID:", error)
+    }
   }
   
   // Se ainda não encontrar, tenta buscar pelo nome convertido em slug
   if (!barber) {
-    const allBarbers = await db.barber.findMany({
-      include: {
-        barbershop: {
-          include: {
-            services: true,
+    try {
+      const allBarbers = await db.barber.findMany({
+        include: {
+          barbershop: {
+            include: {
+              services: true,
+            },
           },
         },
-      },
-    })
-    
-    barber = allBarbers.find(b => createSlug(b.name) === params.slug) || null
+      })
+
+      barber = allBarbers.find(b => createSlug(b.name) === params.slug) || null
+    } catch (error) {
+      console.error("Erro ao buscar todos barbeiros:", error)
+    }
   }
 
   if (!barber) {
@@ -116,7 +141,7 @@ const BarberPage = async ({ params }: BarberPageProps) => {
     services: barber.barbershop.services.map(service => ({
       ...service,
       price: Number(service.price)
-    }))
+    } as typeof service & { price: number }))
   }
 
   return (
@@ -235,7 +260,7 @@ const BarberPage = async ({ params }: BarberPageProps) => {
                 service={{
                   ...service,
                   price: Number(service.price)
-                }}
+                } as typeof service & { price: number }}
                 barberId={barber.id}
               />
             ))}
